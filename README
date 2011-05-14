@@ -1,0 +1,15 @@
+mwthr, a mobile-device friendly presentation of US National Weather Service
+data made to run on Google App Engine.
+Copyright 2011 Matt Kenney
+Source code: https://github.com/mattkenney/mwthr
+Language: Java 5.0
+License: GNU Affero General Public License
+
+mwthr uses Java-ML by Thomas Abeel, Yves Van de Peer, and Yvan Saeys,
+available from http://java-ml.sourceforge.net/. A copy of the Java-ML JAR is
+included here for convenience.
+
+For IP address geolocation, mwthr uses GeoLite data created by MaxMind,
+available from http://www.maxmind.com/. The buildfile will download the
+GeoLite data as well as the API source, and patch the source slightly to be
+compatible with Google App Engine.
