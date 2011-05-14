@@ -1,0 +1,200 @@
+--- geoip/GeoIPJava-1.2.4/source/com/maxmind/geoip/LookupService.java	2010-08-13 14:48:52.000000000 -0400
++++ geoip.bak/maxmind/geoip/LookupService.java	2011-05-14 17:13:02.000000000 -0400
+@@ -70,11 +70,153 @@
+  * @author Matt Tucker (matt@jivesoftware.com)
+  */
+ public class LookupService {
++// MJK 2011-05-14: added static inner classes to support use without filesystem access
++    private static class RandomAccessData
++    {
++        private final byte[] data;
++        private int srcPos = 0;
++
++        public RandomAccessData(byte[] data)
++        {
++            this.data = data;
++        }
++
++        public void close()
++            throws IOException
++        {
++        }
++
++        public long getFilePointer()
++            throws IOException
++        {
++            return srcPos;
++        }
++
++        public long length()
++            throws IOException
++        {
++            return (data == null) ? 0 : data.length;
++        }
++
++        public int read(byte[] b)
++            throws IOException
++        {
++            int length = (data == null) ? 0 : Math.min(b.length, data.length - srcPos);
++            if (length > 0)
++            {
++                System.arraycopy(data, srcPos, b, 0, length);
++                srcPos += length;
++            }
++            return ((length <= 0) ? -1 : length);
++        }
++
++        public byte readByte()
++            throws IOException
++        {
++            if (data == null || srcPos >= data.length)
++            {
++                throw new java.io.EOFException();
++            }
++            return data[srcPos++];
++        }
++
++        public void readFully(byte[] b)
++            throws IOException
++        {
++            readFully(b, 0, b.length);
++        }
++
++        public void readFully(byte[] b, int off, int len)
++            throws IOException
++        {
++            int length = (data == null) ? 0 : Math.min(len, data.length - srcPos);
++            if (length > 0)
++            {
++                System.arraycopy(data, srcPos, b, off, length);
++                srcPos += length;
++            }
++            if (length < len)
++            {
++                throw new java.io.EOFException();
++            }
++        }
++
++        public void seek(long pos)
++            throws IOException
++        {
++            if (pos < 0 || pos > Integer.MAX_VALUE)
++            {
++                throw new IOException();
++            }
++            srcPos = (int) pos;
++        }
++    }
++
++    private static class RandomAccessDataFile extends RandomAccessData
++    {
++        private final RandomAccessFile file;
++
++        public RandomAccessDataFile(File databaseFile, String mode)
++            throws java.io.FileNotFoundException
++        {
++            super(null);
++            file = new RandomAccessFile(databaseFile, mode);
++        }
++
++        public void close()
++            throws IOException
++        {
++            file.close();
++        }
++
++        public long getFilePointer()
++            throws IOException
++        {
++            return file.getFilePointer();
++        }
++
++        public long length()
++            throws IOException
++        {
++            return file.length();
++        }
++
++        public int read(byte[] b)
++            throws IOException
++        {
++            return file.read(b);
++        }
++
++        public byte readByte()
++            throws IOException
++        {
++            return file.readByte();
++        }
++
++        public void readFully(byte[] b)
++            throws IOException
++        {
++            file.readFully(b);
++        }
++
++        public void readFully(byte[] b, int off, int len)
++            throws IOException
++        {
++            file.readFully(b, off, len);
++        }
++
++        public void seek(long pos)
++            throws IOException
++        {
++            file.seek(pos);
++        }
++    }
++// /MJK
+ 
+     /**
+      * Database file.
+      */
+-    private RandomAccessFile file = null;
++    private RandomAccessData file = null; // MJK 2011-05-14: changed from RandomAccessFile to RandomAccessData
+     private File databaseFile = null;
+ 
+     /**
+@@ -270,7 +412,7 @@
+      */
+     public LookupService(File databaseFile) throws IOException {
+         this.databaseFile = databaseFile;
+-        this.file = new RandomAccessFile(databaseFile, "r");
++        this.file = new RandomAccessDataFile(databaseFile, "r"); // MJK 2011-05-14: changed from RandomAccessFile to RandomAccessDataFile
+         init();
+     }
+ 
+@@ -300,10 +442,23 @@
+      */
+     public LookupService(File databaseFile, int options) throws IOException{
+         this.databaseFile = databaseFile;
+-	this.file = new RandomAccessFile(databaseFile, "r");
++	this.file = new RandomAccessDataFile(databaseFile, "r"); // MJK 2011-05-14: changed from RandomAccessFile to RandomAccessDataFile
+ 	dboptions = options;
+ 	init();
+     }
++// MJK 2011-05-14: added method
++    /**
++     * Create a new lookup service using the specified database data.
++     *
++     * @param data the database as a byte array
++     * @throws java.io.IOException if an error occured creating the lookup service
++     *      from the database file.
++     */
++    public LookupService(byte[] data) throws IOException {
++        this.file = new RandomAccessData(data);
++        init();
++    }
++// /MJK
+     /**
+      * Reads meta-data from the database file.
+      *
+@@ -577,7 +732,7 @@
+             /* GeoIP Database file updated */
+             /* refresh filehandle */
+             file.close();
+-            file = new RandomAccessFile(databaseFile,"r");
++            file = new RandomAccessDataFile(databaseFile,"r"); // MJK 2011-05-14: changed from RandomAccessFile to RandomAccessDataFile
+ 	    databaseInfo = null;
+ 	    init();
+           }
