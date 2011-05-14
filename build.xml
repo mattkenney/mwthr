@@ -65,7 +65,7 @@
                 <fileset dir="${appengine.sdk}/lib/shared">
                     <include name="*.jar"/>
                 </fileset>
-                <fileset dir="lib">
+                <fileset dir="${war.dir}/WEB-INF/lib">
                     <include name="*.jar"/>
                 </fileset>
             </classpath>
@@ -152,7 +152,7 @@
         <exec executable="split" dir="${war.dir}/WEB-INF/${geoip.data}" >
             <arg value="-b" />
             <arg value="1M" />
-            <arg file="geoip/${geoip.data}" />
+            <arg file="geoip/${geoip.data.base}" />
         </exec>
     </target>
 
