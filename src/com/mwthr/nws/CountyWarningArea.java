@@ -123,14 +123,14 @@ public final class CountyWarningArea extends Location
         return Location.getKDTree(CountyWarningArea.class);
     }
 
+    public String getKey()
+    {
+        return fips;
+    }
+
     public static Map getMap()
     {
         return Location.getMap(Nexrad.class);
-    }
-
-    public String getName()
-    {
-        return zone;
     }
 
     public String toString()

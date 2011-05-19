@@ -121,14 +121,14 @@ public class Nexrad extends Location
         return Location.getKDTree(Nexrad.class);
     }
 
+    public String getKey()
+    {
+        return icao;
+    }
+
     public static Map getMap()
     {
         return Location.getMap(Nexrad.class);
-    }
-
-    public String getName()
-    {
-        return icao;
     }
 
     private String substring(String line, int length, int start, int end)

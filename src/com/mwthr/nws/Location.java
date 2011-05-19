@@ -108,8 +108,9 @@ public abstract class Location
         for (String line = lines.readLine(); line != null; line = lines.readLine())
         {
             Location loc = init.newInstance(line);
+            String key = loc.getKey();
             double[] coordinates = loc.getCoordinates();
-            if (coordinates != null)
+            if (coordinates != null && key != null && key.length() > 0)
             {
                 result.insert(coordinates, loc);
             }
@@ -149,14 +150,14 @@ public abstract class Location
         for (String line = lines.readLine(); line != null; line = lines.readLine())
         {
             Location loc = init.newInstance(line);
-            String name = loc.getName();
-            if (name != null)
+            String key = loc.getKey();
+            if (key != null && key.length() > 0)
             {
-                result.put(name, loc);
+                result.put(key, loc);
             }
         }
         return result;
     }
 
-    public abstract String getName();
+    public abstract String getKey();
 }

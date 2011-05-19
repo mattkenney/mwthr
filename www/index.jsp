@@ -26,7 +26,7 @@
 static final KDTree radarTree = Nexrad.getKDTree();
 static final Map radarMap = Nexrad.getMap();
 %><%
-String title = "National Radar";
+String title = "NATIONAL RADAR";
 String src = null;
 Nexrad radar = null;
 String icao = request.getParameter("icao");
@@ -41,7 +41,7 @@ else
 }
 if (radar != null && radar.icao != null && radar.icao.length() > 0)
 {
-    title = radar.icao + " Radar";
+    title = radar.name + " RADAR";
     src = "http://radar.weather.gov/ridge/lite/N0R/" + radar.icao.substring(1) + "_loop.gif";
 }
 %><!DOCTYPE html>
