@@ -45,7 +45,7 @@ if (radar == null || radar.icao == null || radar.icao.length() == 0 || radar.nam
 String title = radar.name.trim() + " RADAR";
 String id = radar.icao.substring(1);
 String srcLoop = "http://radar.weather.gov/ridge/lite/N0R/" + id + "_loop.gif";
-String src = "http://radar.weather.gov/ridge/lite/N0R/" + id + "_0.png";
+String src = "http://radar.weather.gov/ridge/lite/N0R/" + id + "_";
 %><!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
