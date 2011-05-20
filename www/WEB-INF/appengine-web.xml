@@ -4,6 +4,7 @@
     <static-files>
         <include path="/favicon.ico" />
         <include path="/images/**" />
+        <include path="/js/**" />
         <include path="/style/**" />
     </static-files>
 

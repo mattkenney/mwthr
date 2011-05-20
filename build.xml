@@ -38,10 +38,10 @@
     <!-- Change if you like e.g. "war" better than "www" for the output -->
     <property name="war.dir" location="www"/>
 
-    <target name="copy" description="Copy other src stuff to the application directory">
+    <target name="copy" description="Copy other java stuff to the application directory">
         <mkdir dir="${war.dir}/WEB-INF/classes"/>
         <copy todir="${war.dir}/WEB-INF/classes">
-            <fileset dir="src">
+            <fileset dir="java">
                 <include name="**/*.properties"/>
                 <include name="**/*.txt"/>
             </fileset>
@@ -50,6 +50,7 @@
 
     <target name="clean" description="Force a clean slate to rebuild">
         <delete dir="${war.dir}/WEB-INF/classes"/>
+        <delete dir="${war.dir}/js"/>
         <delete defaultexcludes="no" dir="${war.dir}">
             <include name="**/*~"/>
         </delete>
@@ -57,7 +58,7 @@
 
     <target name="compile" depends="copy,geoip" description="Compile the application servlet code">
         <mkdir dir="${war.dir}/WEB-INF/classes"/>
-        <javac srcdir="src" destdir="${war.dir}/WEB-INF/classes" debug="true" includeantruntime="false">
+        <javac srcdir="java" destdir="${war.dir}/WEB-INF/classes" debug="true" includeantruntime="false">
             <classpath>
                 <fileset dir="${appengine.sdk}/lib/user">
                     <include name="*.jar"/>
@@ -91,6 +92,9 @@
 
   <target name="update" depends="war"
           description="Uploads the application, including indexes">
+    <delete defaultexcludes="no" dir="${war.dir}">
+        <include name="**/*~"/>
+    </delete>
     <appcfg action="update" war="${war.dir}"/>
   </target>
 
@@ -115,6 +119,25 @@
       </args>
     </appcfg>
   </target>
+
+    <target name="js">
+        <mkdir dir="${war.dir}/js" />
+        <copy todir="${war.dir}/js">
+            <fileset dir="js">
+                <type type="dir"/>
+            </fileset>
+        </copy>
+        <apply executable="yui-compressor">
+            <fileset dir="js">
+                <include name="**/*.js"/>
+            </fileset>
+            <mapper type="glob" from="*" to="${war.dir}/js/*"/>
+            <arg value="--preserve-semi" />
+            <arg value="-o" />
+            <targetfile/>
+            <srcfile/>
+        </apply>
+    </target>
 
     <property name="geoip.api" value="GeoIPJava-1.2.4" />
     <property name="geoip.api.file" value="${geoip.api}.zip" />
