@@ -4,6 +4,11 @@
     font-family:sans-serif;
 }
 
+img
+{
+    border:0;
+}
+
 .label
 {
     white-space:nowrap;

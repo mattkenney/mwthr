@@ -1,4 +1,5 @@
 <%@ page contentType="text/html; charset=UTF-8"
+%><%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"
 %><%
 /*
  * Copyright 2011 Matt Kenney
@@ -22,12 +23,20 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <meta content="text/html;charset=UTF-8" http-equiv="Content-type" />
-<meta content="initial-scale=1.0; maximum-scale=1.0; user-scalable=0;" name="viewport" />
-<link href="/css/default.css" rel="stylesheet" type="text/css" />
+<meta content="initial-scale=1.0" name="viewport" />
+<style type="text/css">
+<% pageContext.include("/css/default.css"); %>
+</style>
 <title>mwthr: USA</title>
 </head>
 <body>
-<img alt="radar" border="0" height="282" src="http://radar.weather.gov/Conus/RadarImg/latest_Small.gif" width="600" usemap="#radarmap" />
+<div>
+<table class="summary">
+<tbody>
+<tr><td class="label">Click map to choose location:</td></tr>
+</tbody>
+</table>
+<img alt="radar" height="282" src="http://radar.weather.gov/Conus/RadarImg/latest_Small.gif" width="600" usemap="#radarmap" />
 <map name="radarmap">
 <area shape="poly" coords="77,0,73,25,65,36,7,26,12,0,77,0,77,0" href="/icao/katx" alt="Go to the Seattle/Tacoma, WA Doppler radar">
 <area shape="poly" coords="121,0,113,44,108,46,74,26,77,0,118,0,121,0,121,0" href="/icao/kotx" alt="Go to the Spokane, WA Doppler radar">
@@ -172,5 +181,6 @@
 <area shape="poly" coords="394,249,415,223,435,208,440,207,450,209,454,231,447,238,394,249,394,249" href="/icao/ktbw" alt="Go to the Tampa Bay Area, FL Doppler radar">
 <area shape="poly" coords="394,249,448,238,473,270,383,263,394,249,394,249" href="/icao/kbyx" alt="Go to the Key West, FL Doppler radar">
 </map>
+</div>
 </body>
 </html>

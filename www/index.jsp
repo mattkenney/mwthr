@@ -23,15 +23,17 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <meta content="text/html;charset=UTF-8" http-equiv="Content-type" />
-<meta content="initial-scale=1.0; maximum-scale=1.0; user-scalable=0;" name="viewport" />
-<link href="/css/default.css" rel="stylesheet" type="text/css" />
+<meta content="initial-scale=1.0" name="viewport" />
+<style type="text/css">
+<% pageContext.include("/css/default.css"); %>
+</style>
 <title>mwthr: <c:out value="${cwa.name}" />, <c:out value="${cwa.state}" /></title>
 </head>
 <body>
 <div>
 <table class="summary">
 <tbody>
-<tr><td class="label">County/Area:</td><td colspan="2"><c:out value="${cwa.name}, ${cwa.state}" /></td>
+<tr><td class="label">County/Area:</td><td colspan="2"><c:out value="${cwa.name}, ${cwa.state}" /></td></tr>
 <tr><td class="label">Radar:</td><td><c:out value="${radar.name}" /></td><td class="option"><a href="/icao/">change location</a></td></tr>
 </tbody>
 </table>
