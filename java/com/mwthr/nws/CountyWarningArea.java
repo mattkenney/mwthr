@@ -24,17 +24,17 @@ import net.sf.javaml.core.kdtree.KDTree;
 
 public final class CountyWarningArea extends Location
 {
-    public final String state;
-    public final String zone;
-    public final String cwa;
-    public final String name;
-    public final String state_zone;
-    public final String countyname;
-    public final String fips;
-    public final String time_zone;
-    public final String fe_area;
-    public final String lat;
-    public final String lon;
+    private final String state;
+    private final String zone;
+    private final String cwa;
+    private final String name;
+    private final String state_zone;
+    private final String countyname;
+    private final String fips;
+    private final String time_zone;
+    private final String fe_area;
+    private final String lat;
+    private final String lon;
 
     public CountyWarningArea(String line)
     {
@@ -112,6 +112,61 @@ public final class CountyWarningArea extends Location
         this.lat =          lat;
         this.lon =          lon;
     }
+    
+    public String getState()
+    {
+        return state;
+    }
+
+    public String getZone()
+    {
+        return zone;
+    }
+
+    public String getCwa()
+    {
+        return cwa;
+    }
+
+    public String getName()
+    {
+        return name;
+    }
+
+    public String getState_zone()
+    {
+        return state_zone;
+    }
+
+    public String getCountyname()
+    {
+        return countyname;
+    }
+
+    public String getFips()
+    {
+        return fips;
+    }
+
+    public String getTime_zone()
+    {
+        return time_zone;
+    }
+
+    public String getFe_area()
+    {
+        return fe_area;
+    }
+
+    public String getLat()
+    {
+        return lat;
+    }
+
+    public String getLon()
+    {
+        return lon;
+    }
 
     public double[] getCoordinates()
     {
@@ -125,12 +180,21 @@ public final class CountyWarningArea extends Location
 
     public String getKey()
     {
-        return fips;
+        return zone;
     }
 
     public static Map getMap()
     {
         return Location.getMap(Nexrad.class);
+    }
+
+    public boolean isValid()
+    {
+        return
+            zone != null && zone.length() > 0 &&
+            name != null && name.length() > 0 &&
+            state != null && state.length() > 0 &&
+            fips != null && fips.length() > 0;
     }
 
     public String toString()

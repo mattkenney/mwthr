@@ -1,4 +1,6 @@
-<%
+<%@ page contentType="text/html; charset=UTF-8"
+%><%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"
+%><%
 /*
  * Copyright 2011 Matt Kenney
  *
@@ -16,47 +18,29 @@
  *
  * You should have received a copy of the GNU Affero General Public License
  * along with mwthr.  If not, see <http://www.gnu.org/licenses/>.
- */
-%><%@ page
-    import="java.util.*,
-            net.sf.javaml.core.kdtree.*,
-            com.mwthr.nws.*,
-            com.mwthr.web.*"
-%><%!
-static final KDTree radarTree = Nexrad.getKDTree();
-static final Map radarMap = Nexrad.getMap();
-%><%
-Nexrad radar = null;
-String icao = request.getParameter("icao");
-if (icao == null)
-{
-    double[] where = GeoIP.getCoordinates(application, request);
-    radar = (where == null) ? null : (Nexrad) radarTree.nearest(where);
-}
-else
-{
-    radar = (Nexrad) radarMap.get(icao);
-}
-if (radar == null || radar.icao == null || radar.icao.length() == 0 || radar.name == null || radar.name.length() == 0)
-{
-    pageContext.forward("national.jsp");
-    return;
-}
-String title = radar.name.trim() + " RADAR";
-String id = radar.icao.substring(1);
-String srcLoop = "http://radar.weather.gov/ridge/lite/N0R/" + id + "_loop.gif";
-String src = "http://radar.weather.gov/ridge/lite/N0R/" + id + "_";
+*/
 %><!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-<title><%= title %></title>
+<meta http-equiv="Content-type" content="text/html;charset=UTF-8" />
 <meta name="viewport" content="initial-scale=1.0; maximum-scale=1.0; user-scalable=0;" />
+<title>mwthr: <c:out value="${cwa.name}" />, <c:out value="${cwa.state}" /></title>
 </head>
 <body>
 <div>
-<noscript><img id="radar" alt="<%= title %>" height="550" src="<%= srcLoop %>" width="600" /></noscript>
-<input id="jsloop" name="jsloop" type="hidden" value="<%= src %>" />
+<table>
+<tbody>
+<tr><td>County/Area:</td><td><c:out value="${cwa.name}, ${cwa.state}" /></td>
+<tr><td>Radar:</td><td><c:out value="${radar.name}" /></td></tr>
+</tbody>
+</table>
+<noscript><img alt="radar" height="550" src="<c:out value="${radar.baseURL}" />Loop.gif" width="600" /></noscript>
+<input id="jsloop" name="jsloop" type="hidden" value="<c:out value="${radar.baseURL}" />" />
 </div>
-<script type="text/javascript" src="/js/radarloop.js"></script>
+<script type="text/javascript">
+/* <![CDATA[ */
+<% pageContext.include("/js/radarloop.js"); %>
+/* ]]> */
+</script>
 </body>
 </html>

@@ -24,18 +24,18 @@ import net.sf.javaml.core.kdtree.KDTree;
 
 public class Nexrad extends Location
 {
-    public final String ncdcid;
-    public final String icao;
-    public final String wban;
-    public final String name;
-    public final String country;
-    public final String st;
-    public final String county;
-    public final String lat;
-    public final String lon;
-    public final String elev;
-    public final String time;
-    public final String stntype;
+    private final String ncdcid;
+    private final String icao;
+    private final String wban;
+    private final String name;
+    private final String country;
+    private final String st;
+    private final String county;
+    private final String lat;
+    private final String lon;
+    private final String elev;
+    private final String time;
+    private final String stntype;
 
     public Nexrad(String line)
     {
@@ -110,6 +110,71 @@ public class Nexrad extends Location
         this.time =     time;
         this.stntype =  stntype;
     }
+    
+    public String getNcdcid()
+    {
+        return ncdcid;
+    }
+
+    public String getIcao()
+    {
+        return icao;
+    }
+
+    public String getWban()
+    {
+        return wban;
+    }
+
+    public String getName()
+    {
+        return name;
+    }
+
+    public String getCountry()
+    {
+        return country;
+    }
+
+    public String getSt()
+    {
+        return st;
+    }
+
+    public String getCounty()
+    {
+        return county;
+    }
+
+    public String getLat()
+    {
+        return lat;
+    }
+
+    public String getLon()
+    {
+        return lon;
+    }
+
+    public String getElev()
+    {
+        return elev;
+    }
+
+    public String getTime()
+    {
+        return time;
+    }
+
+    public String getStntype()
+    {
+        return stntype;
+    }
+
+    public String getBaseURL()
+    {
+        return "http://radar.weather.gov/ridge/lite/N0R/" + icao.substring(1) + "_";
+    }
 
     public double[] getCoordinates()
     {
@@ -139,6 +204,13 @@ public class Nexrad extends Location
             result = line.substring(start - 1, end < length ? end : length);
         }
         return result;
+    }
+
+    public boolean isValid()
+    {
+        return
+            icao != null && icao.length() > 0 &&
+            name != null && name.length() > 0;
     }
 
     public String toString()
