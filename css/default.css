@@ -1,0 +1,21 @@
+*
+{
+    background-color:white;
+    font-family:sans-serif;
+}
+
+.label
+{
+    white-space:nowrap;
+    width:1%;
+}
+
+.option
+{
+    text-align:right;
+}
+
+.summary
+{
+    width:100%;
+}

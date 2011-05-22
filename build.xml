@@ -73,11 +73,11 @@
         </javac>
     </target>
 
-    <target name="run" depends="compile" description="Run the dev_appserver">
+    <target name="run" depends="compile,css,js" description="Run the dev_appserver">
         <dev_appserver war="${war.dir}" address="0.0.0.0" port="${http.port}"/>
     </target>
 
-    <target name="war" depends="compile" />
+    <target name="war" depends="compile,css,js" />
 
   <target name="debug" depends="war"
           description="Launches dev_appserver with remote debugging enabled">
@@ -119,6 +119,24 @@
       </args>
     </appcfg>
   </target>
+
+    <target name="css">
+        <mkdir dir="${war.dir}/css" />
+        <copy todir="${war.dir}/css">
+            <fileset dir="js">
+                <type type="dir"/>
+            </fileset>
+        </copy>
+        <apply executable="yui-compressor">
+            <fileset dir="css">
+                <include name="**/*.css"/>
+            </fileset>
+            <mapper type="glob" from="*" to="${war.dir}/css/*"/>
+            <arg value="-o" />
+            <targetfile/>
+            <srcfile/>
+        </apply>
+    </target>
 
     <target name="js">
         <mkdir dir="${war.dir}/js" />

@@ -22,16 +22,17 @@
 %><!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-<meta http-equiv="Content-type" content="text/html;charset=UTF-8" />
-<meta name="viewport" content="initial-scale=1.0; maximum-scale=1.0; user-scalable=0;" />
+<meta content="text/html;charset=UTF-8" http-equiv="Content-type" />
+<meta content="initial-scale=1.0; maximum-scale=1.0; user-scalable=0;" name="viewport" />
+<link href="/css/default.css" rel="stylesheet" type="text/css" />
 <title>mwthr: <c:out value="${cwa.name}" />, <c:out value="${cwa.state}" /></title>
 </head>
 <body>
 <div>
-<table>
+<table class="summary">
 <tbody>
-<tr><td>County/Area:</td><td><c:out value="${cwa.name}, ${cwa.state}" /></td>
-<tr><td>Radar:</td><td><c:out value="${radar.name}" /></td></tr>
+<tr><td class="label">County/Area:</td><td colspan="2"><c:out value="${cwa.name}, ${cwa.state}" /></td>
+<tr><td class="label">Radar:</td><td><c:out value="${radar.name}" /></td><td class="option"><a href="/icao/">change location</a></td></tr>
 </tbody>
 </table>
 <noscript><img alt="radar" height="550" src="<c:out value="${radar.baseURL}" />Loop.gif" width="600" /></noscript>

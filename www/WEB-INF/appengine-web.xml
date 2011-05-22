@@ -3,9 +3,9 @@
 
     <static-files>
         <include path="/favicon.ico" />
+        <include path="/css/**" />
         <include path="/images/**" />
         <include path="/js/**" />
-        <include path="/style/**" />
     </static-files>
 
     <system-properties>

@@ -21,8 +21,9 @@
 %><!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-<meta http-equiv="Content-type" content="text/html;charset=UTF-8" />
-<meta name="viewport" content="initial-scale=1.0; maximum-scale=1.0; user-scalable=0;" />
+<meta content="text/html;charset=UTF-8" http-equiv="Content-type" />
+<meta content="initial-scale=1.0; maximum-scale=1.0; user-scalable=0;" name="viewport" />
+<link href="/css/default.css" rel="stylesheet" type="text/css" />
 <title>mwthr: USA</title>
 </head>
 <body>
