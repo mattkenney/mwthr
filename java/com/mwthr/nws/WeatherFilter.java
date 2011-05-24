@@ -30,18 +30,12 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import net.sf.javaml.core.kdtree.KDTree;
-
 import com.mwthr.web.GeoIP;
 import com.mwthr.web.PathMatcher;
 
 public class WeatherFilter implements Filter
 {
     private FilterConfig config = null;
-    private KDTree zoneTree = null;
-    private Map zoneMap = null;
-    private KDTree radarTree = null;
-    private Map radarMap = null;
 
     public WeatherFilter()
     {
@@ -49,10 +43,6 @@ public class WeatherFilter implements Filter
 
     public void destroy()
     {
-        zoneTree = null;
-        zoneMap = null;
-        radarTree = null;
-        radarMap = null;
     }
 
     public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain)
@@ -62,20 +52,19 @@ public class WeatherFilter implements Filter
         HttpServletResponse response = (HttpServletResponse) res;
 
         PathMatcher path = new PathMatcher(request.getRequestURI());
-        CountyWarningArea cwa = null;
-        Nexrad radar = null;
+        Map cwa = null;
+        Map radar = null;
 
         if (path.matches("^/+$"))
         {
             double[] where = GeoIP.getCoordinates(config.getServletContext(), request);
-            cwa = (where == null) ? null : (CountyWarningArea) zoneTree.nearest(where);
-            radar = (where == null) ? null : (Nexrad) radarTree.nearest(where);
+            cwa = Locator.CWA.nearest(where);
+            radar = Locator.NEXRAD.nearest(where);
         }
         else if (path.matches("^/+cwa/+([0-9]{3})$"))
         {
-            cwa = (CountyWarningArea) zoneMap.get(path.group(1).toUpperCase());
-            double[] where = (cwa == null) ? null : cwa.getCoordinates();
-            radar = (where == null) ? null : (Nexrad) radarTree.nearest(where);
+            cwa = Locator.CWA.get(path.group(1).toUpperCase());
+            radar = Locator.NEXRAD.nearest(cwa);
             if (radar == null)
             {
                 response.sendError(404);
@@ -84,9 +73,8 @@ public class WeatherFilter implements Filter
         }
         else if (path.matches("^/+icao/+([a-z]{4})$"))
         {
-            radar = (Nexrad) radarMap.get(path.group(1).toUpperCase());
-            double[] where = (radar == null) ? null : radar.getCoordinates();
-            cwa = (where == null) ? null : (CountyWarningArea) zoneTree.nearest(where);
+            radar = Locator.NEXRAD.get(path.group(1).toUpperCase());
+            cwa = Locator.CWA.nearest(radar);
             if (cwa == null)
             {
                 response.sendError(404);
@@ -117,7 +105,7 @@ public class WeatherFilter implements Filter
         }
         else
         {
-            dispatcher = request.getRequestDispatcher("/index.jsp");
+            dispatcher = request.getRequestDispatcher("/weather.jsp");
         }
         dispatcher.forward(request, response);
     }
@@ -126,9 +114,5 @@ public class WeatherFilter implements Filter
         throws ServletException
     {
         this.config = config;
-        zoneTree = CountyWarningArea.getKDTree();
-        zoneMap = CountyWarningArea.getMap();
-        radarTree = Nexrad.getKDTree();
-        radarMap = Nexrad.getMap();
     }
 }

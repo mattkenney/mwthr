@@ -18,39 +18,61 @@
  */
 package com.mwthr.nws;
 
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.nio.charset.Charset;
+import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
-import net.sf.javaml.core.kdtree.KDTree;
-
-public class Nexrad extends Location
+class Nexrad extends LocatorImpl
 {
-    private final String ncdcid;
-    private final String icao;
-    private final String wban;
-    private final String name;
-    private final String country;
-    private final String st;
-    private final String county;
-    private final String lat;
-    private final String lon;
-    private final String elev;
-    private final String time;
-    private final String stntype;
+    private static final Charset LOAD_CHARSET = Charset.forName("UTF-8");
 
-    public Nexrad(String line)
+    Nexrad()
     {
-        String ncdcid = null;
-        String icao = null;
-        String wban = null;
-        String name = null;
-        String country = null;
-        String st = null;
-        String county = null;
-        String lat = null;
-        String lon = null;
-        String elev = null;
-        String time = null;
-        String stntype = null;
+        try
+        {
+            InputStream in = getClass().getResourceAsStream(getFilename());
+            
+            BufferedReader lines = new BufferedReader(new InputStreamReader(in, LOAD_CHARSET));
+            for (String line = lines.readLine(); line != null; line = lines.readLine())
+            {
+                Map props = parseLine(line);
+                double[] where = getCoordinates(props);
+                if (where != null && props.containsKey("icao") && props.containsKey("name"))
+                {
+                    tree.insert(where, props);
+                    codeMap.put(props.get("icao"), props);
+                }
+            }
+            
+            in.close();
+        }
+        catch (Exception e)
+        {
+            Logger.getLogger(getClass().getName()).log(Level.WARNING, "Problem loading \"" + getFilename() + "\"", e);
+        }
+    }
+
+    String parseField(Map props, String key, String line, int length, int start, int end)
+    {
+        String result = null;
+        int stop = (end < length) ? end : length;
+        if (line != null && start < length && stop >= start)
+        {
+            result = line.substring(start - 1, stop);
+            props.put(key, result);
+        }
+        return result;
+    }
+
+    Map parseLine(String line)
+    {
+        Map props = new LinkedHashMap(12);
         if (line != null)
         {
             final int length = line.length();
@@ -59,186 +81,48 @@ public class Nexrad extends Location
                 switch (i)
                 {
                 case 0:
-                    ncdcid  = substring(line, length,   1,   8);
+                    parseField(props, "ncdcid",     line, length,   1,   8);
                     break;
                 case 1:
-                    icao    = substring(line, length,  10,  13);
+                    String icao = parseField(props, "icao", line, length,  10,  13);
+                    if (icao != null && icao.length() > 0)
+                    {
+                        props.put("baseurl", "http://radar.weather.gov/ridge/lite/N0R/" + icao.substring(1) + "_");
+                    }
                     break;
                 case 2:
-                    wban    = substring(line, length,  15,  19);
+                    parseField(props, "wban",       line, length,  15,  19);
                     break;
                 case 3:
-                    name    = substring(line, length,  21,  50);
+                    parseField(props, "name",       line, length,  21,  50);
                     break;
                 case 4:
-                    country = substring(line, length,  52,  71);
+                    parseField(props, "country",    line, length,  52,  71);
                     break;
                 case 5:
-                    st      = substring(line, length,  73,  74);
+                    parseField(props, "st",         line, length,  73,  74);
                     break;
                 case 6:
-                    county  = substring(line, length,  76, 106);
+                    parseField(props, "county",     line, length,  76, 106);
                     break;
                 case 7:
-                    lat     = substring(line, length, 107, 115);
+                    parseField(props, "lat",        line, length, 107, 115);
                     break;
                 case 8:
-                    lon     = substring(line, length, 117, 126);
+                    parseField(props, "lon",        line, length, 117, 126);
                     break;
                 case 9:
-                    elev    = substring(line, length, 128, 133);
+                    parseField(props, "elev",       line, length, 128, 133);
                     break;
                 case 10:
-                    time    = substring(line, length, 135, 140);
+                    parseField(props, "time",       line, length, 135, 140);
                     break;
                 case 11:
-                    stntype = substring(line, length, 142, 191);
+                    parseField(props, "stntype",    line, length, 142, 191);
                     break;
                 }
             }
         }
-        this.ncdcid =   ncdcid;
-        this.icao =     icao;
-        this.wban =     wban;
-        this.name =     name;
-        this.country =  country;
-        this.st =       st;
-        this.county =   county;
-        this.lat =      lat;
-        this.lon =      lon;
-        this.elev =     elev;
-        this.time =     time;
-        this.stntype =  stntype;
-    }
-    
-    public String getNcdcid()
-    {
-        return ncdcid;
-    }
-
-    public String getIcao()
-    {
-        return icao;
-    }
-
-    public String getWban()
-    {
-        return wban;
-    }
-
-    public String getName()
-    {
-        return name;
-    }
-
-    public String getCountry()
-    {
-        return country;
-    }
-
-    public String getSt()
-    {
-        return st;
-    }
-
-    public String getCounty()
-    {
-        return county;
-    }
-
-    public String getLat()
-    {
-        return lat;
-    }
-
-    public String getLon()
-    {
-        return lon;
-    }
-
-    public String getElev()
-    {
-        return elev;
-    }
-
-    public String getTime()
-    {
-        return time;
-    }
-
-    public String getStntype()
-    {
-        return stntype;
-    }
-
-    public String getBaseURL()
-    {
-        return "http://radar.weather.gov/ridge/lite/N0R/" + icao.substring(1) + "_";
-    }
-
-    public double[] getCoordinates()
-    {
-        return Location.getCoordinates(lat, lon);
-    }
-
-    public static KDTree getKDTree()
-    {
-        return Location.getKDTree(Nexrad.class);
-    }
-
-    public String getKey()
-    {
-        return icao;
-    }
-
-    public static Map getMap()
-    {
-        return Location.getMap(Nexrad.class);
-    }
-
-    private String substring(String line, int length, int start, int end)
-    {
-        String result = null;
-        if (start < length)
-        {
-            result = line.substring(start - 1, end < length ? end : length);
-        }
-        return result;
-    }
-
-    public boolean isValid()
-    {
-        return
-            icao != null && icao.length() > 0 &&
-            name != null && name.length() > 0;
-    }
-
-    public String toString()
-    {
-        StringBuilder buffer = new StringBuilder();
-        buffer.append(ncdcid);
-        buffer.append(' ');
-        buffer.append(icao);
-        buffer.append(' ');
-        buffer.append(wban);
-        buffer.append(' ');
-        buffer.append(name);
-        buffer.append(' ');
-        buffer.append(country);
-        buffer.append(' ');
-        buffer.append(st);
-        buffer.append(' ');
-        buffer.append(county);
-        buffer.append(' ');
-        buffer.append(lat);
-        buffer.append(' ');
-        buffer.append(lon);
-        buffer.append(' ');
-        buffer.append(elev);
-        buffer.append(' ');
-        buffer.append(time);
-        buffer.append(' ');
-        buffer.append(stntype);
-        return buffer.toString();
+        return Collections.unmodifiableMap(props);
     }
 }

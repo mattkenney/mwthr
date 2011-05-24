@@ -18,38 +18,63 @@
  */
 package com.mwthr.nws;
 
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.nio.charset.Charset;
+import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
-import net.sf.javaml.core.kdtree.KDTree;
-
-public final class CountyWarningArea extends Location
+class CountyWarningArea extends LocatorImpl
 {
-    private final String state;
-    private final String zone;
-    private final String cwa;
-    private final String name;
-    private final String state_zone;
-    private final String countyname;
-    private final String fips;
-    private final String time_zone;
-    private final String fe_area;
-    private final String lat;
-    private final String lon;
+    private static final Charset LOAD_CHARSET;
 
-    public CountyWarningArea(String line)
+    static
     {
-        // get the data into the named final fields
-        String state = null;
-        String zone = null;
-        String cwa = null;
-        String name = null;
-        String state_zone = null;
-        String countyname = null;
-        String fips = null;
-        String time_zone = null;
-        String fe_area = null;
-        String lat = null;
-        String lon = null;
+        Charset encoding = null;
+        try
+        {
+            encoding = Charset.forName("windows-1252");
+        }
+        catch (IllegalArgumentException e)
+        {
+            encoding = Charset.forName("ISO-8859-1");
+        }
+        LOAD_CHARSET = encoding;
+    }
+
+    CountyWarningArea()
+    {
+        try
+        {
+            InputStream in = getClass().getResourceAsStream(getFilename());
+            
+            BufferedReader lines = new BufferedReader(new InputStreamReader(in, LOAD_CHARSET));
+            for (String line = lines.readLine(); line != null; line = lines.readLine())
+            {
+                Map props = parseLine(line);
+                double[] where = getCoordinates(props);
+                if (where != null && props.containsKey("zone") && props.containsKey("name") && props.containsKey("state") && props.containsKey("fips"))
+                {
+                    tree.insert(where, props);
+                    codeMap.put(props.get("icao"), props);
+                }
+            }
+            
+            in.close();
+        }
+        catch (Exception e)
+        {
+            Logger.getLogger(getClass().getName()).log(Level.WARNING, "Problem loading \"" + getFilename() + "\"", e);
+        }
+    }
+
+    Map parseLine(String line)
+    {
+        Map props = new LinkedHashMap(11);
         if (line != null)
         {
             final int length = line.length();
@@ -60,167 +85,49 @@ public final class CountyWarningArea extends Location
                 {
                     end = length;
                 }
-                String field = line.substring(start, end);
-                switch (i)
+                if (end > start)
                 {
-                case 0:
-                    state = field;
-                    break;
-                case 1:
-                    zone = field;
-                    break;
-                case 2:
-                    cwa = field;
-                    break;
-                case 3:
-                    name = field;
-                    break;
-                case 4:
-                    state_zone = field;
-                    break;
-                case 5:
-                    countyname = field;
-                    break;
-                case 6:
-                    fips = field;
-                    break;
-                case 7:
-                    time_zone = field;
-                    break;
-                case 8:
-                    fe_area = field;
-                    break;
-                case 9:
-                    lat = field;
-                    break;
-                case 10:
-                    lon = field;
-                    break;
+                    String field = line.substring(start, end);
+                    switch (i)
+                    {
+                    case 0:
+                        props.put("state", field);
+                        break;
+                    case 1:
+                        props.put("zone", field);
+                        break;
+                    case 2:
+                        props.put("cwa", field);
+                        break;
+                    case 3:
+                        props.put("name", field);
+                        break;
+                    case 4:
+                        props.put("state_zone", field);
+                        break;
+                    case 5:
+                        props.put("countyname", field);
+                        break;
+                    case 6:
+                        props.put("fips", field);
+                        break;
+                    case 7:
+                        props.put("time_zone", field);
+                        break;
+                    case 8:
+                        props.put("fe_area", field);
+                        break;
+                    case 9:
+                        props.put("lat", field);
+                        break;
+                    case 10:
+                        props.put("lon", field);
+                        break;
+                    }
                 }
                 start = end + 1;
             }
         }
-        this.state =        state;
-        this.zone =         zone;
-        this.cwa =          cwa;
-        this.name =         name;
-        this.state_zone =   state_zone;
-        this.countyname =   countyname;
-        this.fips =         fips;
-        this.time_zone =    time_zone;
-        this.fe_area =      fe_area;
-        this.lat =          lat;
-        this.lon =          lon;
-    }
-    
-    public String getState()
-    {
-        return state;
-    }
-
-    public String getZone()
-    {
-        return zone;
-    }
-
-    public String getCwa()
-    {
-        return cwa;
-    }
-
-    public String getName()
-    {
-        return name;
-    }
-
-    public String getState_zone()
-    {
-        return state_zone;
-    }
-
-    public String getCountyname()
-    {
-        return countyname;
-    }
-
-    public String getFips()
-    {
-        return fips;
-    }
-
-    public String getTime_zone()
-    {
-        return time_zone;
-    }
-
-    public String getFe_area()
-    {
-        return fe_area;
-    }
-
-    public String getLat()
-    {
-        return lat;
-    }
-
-    public String getLon()
-    {
-        return lon;
-    }
-
-    public double[] getCoordinates()
-    {
-        return Location.getCoordinates(lat, lon);
-    }
-
-    public static KDTree getKDTree()
-    {
-        return Location.getKDTree(CountyWarningArea.class);
-    }
-
-    public String getKey()
-    {
-        return zone;
-    }
-
-    public static Map getMap()
-    {
-        return Location.getMap(Nexrad.class);
-    }
-
-    public boolean isValid()
-    {
-        return
-            zone != null && zone.length() > 0 &&
-            name != null && name.length() > 0 &&
-            state != null && state.length() > 0 &&
-            fips != null && fips.length() > 0;
-    }
-
-    public String toString()
-    {
-        StringBuilder buffer = new StringBuilder();
-        buffer.append(state);
-        buffer.append('|');
-        buffer.append(zone);
-        buffer.append('|');
-        buffer.append(cwa);
-        buffer.append('|');
-        buffer.append(name);
-        buffer.append('|');
-        buffer.append(state_zone);
-        buffer.append('|');
-        buffer.append(countyname);
-        buffer.append('|');
-        buffer.append(fips);
-        buffer.append('|');
-        buffer.append(time_zone);
-        buffer.append('|');
-        buffer.append(fe_area);
-        buffer.append('|');
-        buffer.append(lat);
-        buffer.append('|');
-        buffer.append(lon);
-        return buffer.toString();
+        return Collections.unmodifiableMap(props);
     }
 }

@@ -37,8 +37,8 @@
 <tr><td class="label">Radar:</td><td><c:out value="${radar.name}" /></td><td class="option"><a href="/icao/">change location</a></td></tr>
 </tbody>
 </table>
-<noscript><img alt="radar" height="550" src="<c:out value="${radar.baseURL}" />Loop.gif" width="600" /></noscript>
-<input id="jsloop" name="jsloop" type="hidden" value="<c:out value="${radar.baseURL}" />" />
+<noscript><img alt="radar" height="550" src="<c:out value="${radar.baseurl}" />Loop.gif" width="600" /></noscript>
+<input id="jsloop" name="jsloop" type="hidden" value="<c:out value="${radar.baseurl}" />" />
 </div>
 <script type="text/javascript">
 /* <![CDATA[ */
