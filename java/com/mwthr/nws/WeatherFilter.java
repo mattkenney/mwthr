@@ -61,13 +61,16 @@ public class WeatherFilter implements Filter
         {
             double[] where = getCoordinates(request);
             station = Locator.STATION.nearest(where);
-            if (station != null)
+            showPicker = (station == null);
+//            if (station != null)
+//            {
+//                response.sendRedirect("/station/" + String.valueOf(station.get("station_id")).toLowerCase());
+//                return;
+//            }
+            if (showPicker)
             {
-                response.sendRedirect("/station/" + String.valueOf(station.get("station_id")).toLowerCase());
-                return;
+                where = GeoIP.getCoordinates(config.getServletContext(), request);
             }
-            showPicker = true;
-            where = GeoIP.getCoordinates(config.getServletContext(), request);
             station = Locator.STATION.nearest(where);
             cwa = Locator.CWA.nearest(where);
             radar = Locator.NEXRAD.nearest(where);
