@@ -22,13 +22,13 @@ import java.util.Map;
 
 public enum Locator
 {
-//    STATION(new Station()),
+    STATION(new Station()),
     NEXRAD(new Nexrad()),
     CWA(new CountyWarningArea()),
     ;
 
     private final LocatorImpl implementation;
-    
+
     Locator(LocatorImpl implementation)
     {
         this.implementation = implementation;

@@ -11,6 +11,7 @@ img
 
 .label
 {
+    vertical-align:top;
     white-space:nowrap;
     width:1%;
 }
@@ -22,5 +23,11 @@ img
 
 .summary
 {
+    width:100%;
+}
+
+.updating
+{
+    margin-top:100px;
     width:100%;
 }

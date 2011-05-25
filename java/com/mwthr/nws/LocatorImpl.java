@@ -35,8 +35,8 @@ abstract class LocatorImpl
     double[] getCoordinates(Map props)
     {
         double[] result = null;
-        String lat = getLatitude(props);
-        String lon = getLongitude(props);
+        String lat = (String) props.get("lat");
+        String lon = (String) props.get("lon");
         if (lat != null && lon != null)
         {
             try
@@ -66,16 +66,6 @@ abstract class LocatorImpl
         }
         result += ".txt";
         return result;
-    }
-
-    String getLatitude(Map props)
-    {
-        return (String) props.get("lat");
-    }
-
-    String getLongitude(Map props)
-    {
-        return (String) props.get("lon");
     }
 
     Map getMap()

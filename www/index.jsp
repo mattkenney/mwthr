@@ -1,5 +1,6 @@
 <%@ page contentType="text/html; charset=UTF-8"
 %><%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"
+%><%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"
 %><%
 /*
  * Copyright 2011 Matt Kenney
@@ -18,7 +19,7 @@
  *
  * You should have received a copy of the GNU Affero General Public License
  * along with mwthr.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 %><!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
@@ -27,22 +28,24 @@
 <style type="text/css">
 <% pageContext.include("/css/default.css"); %>
 </style>
-<title>mwthr: <c:out value="${cwa.name}" />, <c:out value="${cwa.state}" /></title>
+<title>mwthr</title>
 </head>
 <body>
 <div>
-<table class="summary">
-<tbody>
-<tr><td class="label">County/Area:</td><td colspan="2"><c:out value="${cwa.name}, ${cwa.state}" /></td></tr>
-<tr><td class="label">Radar:</td><td><c:out value="${radar.name}" /></td><td class="option"><a href="/icao/">change location</a></td></tr>
+<table class="updating">
+<tbody id="tbody">
+<tr><td class="label" rowspan="2">Choose location:</td><td><a href="/icao/<c:out value="${fn:toLowerCase(radar.icao)}" />">County/Area - <c:out value="${cwa.name}" />, <c:out value="${cwa.state}" /></a></td></tr>
+<tr><td><a href="/icao/">other...</a></td></tr>
 </tbody>
 </table>
-<noscript><img alt="radar" height="550" src="<c:out value="${radar.baseURL}" />Loop.gif" width="600" /></noscript>
-<input id="jsloop" name="jsloop" type="hidden" value="<c:out value="${radar.baseURL}" />" />
+<form action="/" id="location" method="post">
+<input name="lat" type="hidden" value="" />
+<input name="lon" type="hidden" value="" />
+</form>
 </div>
 <script type="text/javascript">
 /* <![CDATA[ */
-<% pageContext.include("/js/radarloop.js"); %>
+<% pageContext.include("/js/geolocation.js"); %>
 /* ]]> */
 </script>
 </body>

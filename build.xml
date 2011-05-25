@@ -44,6 +44,7 @@
             <fileset dir="java">
                 <include name="**/*.properties"/>
                 <include name="**/*.txt"/>
+                <include name="**/*.xml"/>
             </fileset>
         </copy>
     </target>
