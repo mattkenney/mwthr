@@ -1,7 +1,11 @@
 *
 {
-    background-color:white;
     font-family:sans-serif;
+}
+
+body
+{
+    background-color:white;
 }
 
 img
@@ -26,8 +30,16 @@ img
     width:100%;
 }
 
-.updating
+.updating-body
 {
-    margin-top:100px;
-    width:100%;
+    background-color:#999;
+}
+
+.updating-table
+{
+    background-color:white;
+    border:1px solid black;
+    margin-left:auto;
+    margin-right:auto;
+    margin-top:120px;
 }
