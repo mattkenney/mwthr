@@ -5,7 +5,7 @@
 
 body
 {
-    background-color:white;
+    background-color:#ccc;
 }
 
 img
@@ -27,19 +27,12 @@ img
 
 .summary
 {
-    width:100%;
-}
-
-.updating-body
-{
-    background-color:#999;
-}
-
-.updating-table
-{
     background-color:white;
-    border:1px solid black;
-    margin-left:auto;
-    margin-right:auto;
+    border:1px solid #666;
+    width:600px;
+}
+
+.updating
+{
     margin-top:120px;
 }

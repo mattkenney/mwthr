@@ -5,7 +5,7 @@ var makeTable = function ()
     var icao = document.getElementById('icao');
     var name = document.getElementById('name');
     var table = document.createElement('table');
-    table.className = 'updating-table';
+    table.className = 'summary updating';
     name.parentNode.appendChild(table);
     var tbody = document.createElement('tbody');
     table.appendChild(tbody);
@@ -43,16 +43,11 @@ if (navigator.geolocation)
             tbody.insertBefore(tr, tbody.firstChild);
             var td = document.createElement('td');
             td.colSpan = 2;
-            tr.appendChild(td);
-            td.appendChild(document.createTextNode('or'));
-            tr = document.createElement('tr');
-            tbody.insertBefore(tr, tbody.firstChild);
-            td = document.createElement('td');
-            td.colSpan = 2;
+            td.className = 'label';
             tr.appendChild(td);
             td.appendChild(document.createTextNode('Updating location ...'));
         },
-        3000
+        5000
     );
     navigator.geolocation.getCurrentPosition(
         function (pos)

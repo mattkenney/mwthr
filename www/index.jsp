@@ -25,15 +25,16 @@
 <head>
 <meta content="text/html;charset=UTF-8" http-equiv="Content-type" />
 <meta content="initial-scale=1.0" name="viewport" />
+<link href="/images/logo.png" rel="apple-touch-icon" />
 <style type="text/css">
 <% pageContext.include("/css/default.css"); %>
 </style>
 <title>mwthr</title>
 </head>
-<body class="updating-body">
+<body>
 <div>
 <noscript>
-<table class="updating-table">
+<table class="summary updating">
 <tbody>
 <tr><td class="label" rowspan="2">Choose location:</td><td><a href="/icao/<c:out value="${fn:toLowerCase(radar.icao)}" />">County/Area - <c:out value="${cwa.name}" />, <c:out value="${cwa.state}" /></a></td></tr>
 <tr><td><a href="/icao/">other...</a></td></tr>
@@ -45,7 +46,7 @@
 <input name="lon" type="hidden" value="" />
 </form>
 <input id="icao" name="icao" type="hidden" value="/icao/<c:out value="${fn:toLowerCase(radar.icao)}" />" />
-<input id="name" name="name" type="hidden" value="County/Area - <c:out value="${cwa.name}" />" />
+<input id="name" name="name" type="hidden" value="County/Area - <c:out value="${cwa.name}" />, <c:out value="${cwa.state}" />" />
 </div>
 <script type="text/javascript">
 /* <![CDATA[ */

@@ -51,6 +51,7 @@
 
     <target name="clean" description="Force a clean slate to rebuild">
         <delete dir="${war.dir}/WEB-INF/classes"/>
+        <delete dir="${war.dir}/css"/>
         <delete dir="${war.dir}/js"/>
         <delete defaultexcludes="no" dir="${war.dir}">
             <include name="**/*~"/>
@@ -133,6 +134,8 @@
                 <include name="**/*.css"/>
             </fileset>
             <mapper type="glob" from="*" to="${war.dir}/css/*"/>
+            <arg value="--line-break" />
+            <arg value="80" />
             <arg value="-o" />
             <targetfile/>
             <srcfile/>
@@ -151,6 +154,8 @@
                 <include name="**/*.js"/>
             </fileset>
             <mapper type="glob" from="*" to="${war.dir}/js/*"/>
+            <arg value="--line-break" />
+            <arg value="80" />
             <arg value="--preserve-semi" />
             <arg value="-o" />
             <targetfile/>
