@@ -47,10 +47,20 @@
                 <include name="**/*.xml"/>
             </fileset>
         </copy>
+        <mkdir dir="${war.dir}/WEB-INF/lib"/>
+        <copy todir="${war.dir}/WEB-INF/lib">
+            <fileset dir="lib">
+                <include name="**/*.jar"/>
+            </fileset>
+            <fileset dir="${appengine.sdk}/lib/user">
+                <include name="*.jar"/>
+            </fileset>
+        </copy>
     </target>
 
     <target name="clean" description="Force a clean slate to rebuild">
         <delete dir="${war.dir}/WEB-INF/classes"/>
+        <delete dir="${war.dir}/WEB-INF/lib"/>
         <delete dir="${war.dir}/css"/>
         <delete dir="${war.dir}/js"/>
         <delete defaultexcludes="no" dir="${war.dir}">

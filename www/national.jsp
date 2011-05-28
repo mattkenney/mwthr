@@ -34,7 +34,7 @@
 <div>
 <table class="summary">
 <tbody>
-<tr><td class="label">Click map to choose location:</td></tr>
+<tr><td>Click map to choose location:</td></tr>
 </tbody>
 </table>
 <img alt="radar" height="282" src="http://radar.weather.gov/Conus/RadarImg/latest_Small.gif" width="600" usemap="#radarmap" />

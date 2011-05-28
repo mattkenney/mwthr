@@ -16,6 +16,7 @@ img
 .label
 {
     vertical-align:top;
+    text-align:right;
     white-space:nowrap;
     width:1%;
 }

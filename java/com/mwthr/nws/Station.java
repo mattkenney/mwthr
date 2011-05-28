@@ -43,12 +43,14 @@ class Station extends LocatorImpl
             this.elementName = elementName;
         }
 
+        @Override
         public void characters(char[] ch, int start, int length)
             throws SAXException
         {
             buffer.append(ch, start, length);
         }
 
+        @Override
         public void endElement(String uri, String localName, String qName)
             throws SAXException
         {
@@ -62,9 +64,18 @@ class Station extends LocatorImpl
                 {
                     props.put("lon", props.get("longitude"));
                 }
+                if (props.containsKey("xml_url"))
+                {
+                    String value = (String) props.get("xml_url");
+                    if (value.startsWith("http://weather.gov/"))
+                    {
+                        value = "http://www.weather.gov/".concat(value.substring(19));
+                    }
+                    props.put("xml_url_www", value);
+                }
                 props = Collections.unmodifiableMap(props);
                 double[] where = getCoordinates(props);
-                if (where != null && props.containsKey("station_id") && props.containsKey("xml_url"))
+                if (where != null && props.containsKey("station_id") && props.containsKey("xml_url_www"))
                 {
                     tree.insert(where, props);
                     codeMap.put(props.get("station_id"), props);
@@ -82,6 +93,7 @@ class Station extends LocatorImpl
             }
         }
 
+        @Override
         public void startElement(String uri, String localName, String qName, Attributes attributes)
             throws SAXException
         {
@@ -111,6 +123,7 @@ class Station extends LocatorImpl
         }
     }
 
+    @Override
     String getFilename()
     {
         String result = getClass().getName();

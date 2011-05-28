@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with mwthr.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.mwthr.nws;
+package com.mwthr.web;
 
 import java.io.IOException;
 import java.util.Map;
@@ -30,21 +30,22 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.mwthr.web.GeoIP;
-import com.mwthr.web.PathMatcher;
+import com.mwthr.nws.Locator;
 
-public class WeatherFilter implements Filter
+public class LocatorFilter implements Filter
 {
     private FilterConfig config = null;
 
-    public WeatherFilter()
+    public LocatorFilter()
     {
     }
 
+    @Override
     public void destroy()
     {
     }
 
+    @Override
     public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain)
         throws IOException, ServletException
     {
@@ -166,6 +167,7 @@ public class WeatherFilter implements Filter
         return result;
     }
 
+    @Override
     public void init(FilterConfig config)
         throws ServletException
     {
