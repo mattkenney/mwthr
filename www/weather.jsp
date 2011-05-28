@@ -42,6 +42,11 @@
 </table>
 <noscript><img alt="radar" height="550" src="<c:out value="${radar.baseurl}" />Loop.gif" width="600" /></noscript>
 <input id="jsloop" name="jsloop" type="hidden" value="<c:out value="${radar.baseurl}" />" />
+<table class="subtle">
+<tbody>
+<tr><td>Like? Don't like? Let me know, matt<img alt="" src="/images/at.png" />mwthr.com</td></tr>
+</tbody>
+</table>
 </div>
 <script type="text/javascript">
 /* <![CDATA[ */

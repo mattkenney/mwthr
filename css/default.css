@@ -26,6 +26,13 @@ img
     text-align:right;
 }
 
+.subtle
+{
+    color:#666;
+    font-size:75%;
+    width:600px;
+}
+
 .summary
 {
     background-color:white;
