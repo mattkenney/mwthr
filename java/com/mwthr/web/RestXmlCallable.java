@@ -31,9 +31,16 @@ import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
+/**
+ * This class fetches XML data from a URL and returns it as a
+ * {@link java.util.Map java.util.Map}.
+ */
 public class RestXmlCallable
     implements Callable<Map<String, String>>
 {
+    /**
+     * SAX parser data handler that populates the map.
+     */
     private class XmlHandler extends DefaultHandler
     {
         final StringBuilder buffer = new StringBuilder();
@@ -78,10 +85,24 @@ public class RestXmlCallable
         }
     }
 
+    /**
+     * SAX parser factory.
+     */
     private static final SAXParserFactory factory;
 
+    /**
+     * The URL from which to retrieve the XML.
+     */
     private final String urlString;
+
+    /**
+     * The name of the element from which to extract values.
+     */
     private final String elementName;
+
+    /**
+     * The map where the extracted data is stored.
+     */
     private final Map<String, String> result = new LinkedHashMap<String, String>();
 
     static
@@ -90,12 +111,25 @@ public class RestXmlCallable
         factory.setValidating(false);
     }
 
+    /**
+     * Constructor.
+     * @param urlString the URL from which to retrieve the XML
+     * @param elementName the name of the element from which to extract values
+     */
     public RestXmlCallable(String urlString, String elementName)
     {
         this.urlString = urlString;
         this.elementName = elementName;
     }
 
+    /**
+     * Returns the map of data extracted. The first instance of an element
+     * with the name passed to the constructor is used. The simple child
+     * elements of that element become entries in the map, with the element
+     * name as the key and its content as the value. If the extracted element
+     * contains mixed content children, or multiple child elements with the same
+     * name, the result is undefined.
+     */
     @Override
     public Map<String, String> call()
         throws Exception

@@ -30,22 +30,59 @@ import com.google.appengine.api.memcache.jsr107cache.GCacheFactory;
 import net.sf.jsr107cache.CacheFactory;
 import net.sf.jsr107cache.CacheManager;
 
+/**
+ * This <code>ServletContextListener</code> creates a
+ * <a href="http://jcp.org/en/jsr/detail?id=107">JSR 107</a> cache and stores a
+ * reference to it as a servlet context attribute with name "cache". The cache
+ * implements {@link java.util.Map java.util.Map} interface.
+ * <p>
+ * To use, include the following in the
+ * deployment descriptor (web.xml):
+ * <pre>
+ *     &lt;listener&gt;
+ *         &lt;listener-class&gt;com.mwthr.gae.CacheContextListener&lt;/listener-class&gt;
+ *     &lt;/listener&gt;
+ * </pre>
+ * The cache will expire entries after 1 hour.
+ */
 public class CacheContextListener implements ServletContextListener
 {
+    /**
+     * The attribute name used to store a reference to the Memcache, that
+     * is, "cache".
+     */
+    public static final String ATTRIBUTE_NAME = "cache";
+
+    /**
+     * The time after which cache entries will expire, that is, 3600 seconds = 1 hour.
+     */
+    public static final int EXPIRATION_DELTA = 3600;
+
+    /**
+     * No argument constructor.
+     */
     public CacheContextListener()
     {
     }
 
+    /**
+    * See {@link javax.servlet.ServletContextListener#contextDestroyed}.
+     */
     @Override
     public void contextDestroyed(ServletContextEvent sce)
     {
     }
 
+    /**
+     * Creates a Memcache and stores a reference to it as a servlet context
+     * attribute with name "cache".
+     * @param  sce the <code>ServletContextEvent</code> that links to the <code>ServletContext</code>
+     */
     @Override
     public void contextInitialized(ServletContextEvent sce)
     {
-        Map props = new HashMap();
-        props.put(GCacheFactory.EXPIRATION_DELTA, 3600);
+        Map<Object, Object> props = new HashMap<Object, Object>();
+        props.put(GCacheFactory.EXPIRATION_DELTA, EXPIRATION_DELTA);
         Map cache = null;
         try
         {
@@ -58,6 +95,6 @@ public class CacheContextListener implements ServletContextListener
             Logger.getLogger(getClass().getName()).log(Level.SEVERE, "Unable to create cache", e);
         }
         ServletContext context = sce.getServletContext();
-        context.setAttribute("cache", cache);
+        context.setAttribute(ATTRIBUTE_NAME, cache);
     }
 }

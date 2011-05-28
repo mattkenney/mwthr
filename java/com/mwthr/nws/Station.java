@@ -30,13 +30,22 @@ import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
+/**
+ * Package-private implementation of {@link com.mwthr.nws.Locator#STATION}.
+ * <p>The data file is from here:</p>
+ * http://www.weather.gov/xml/current_obs/index.xml
+ */
 class Station extends LocatorImpl
 {
+    /**
+     * SAX parser data handler that populates the map and the 2-dimentional
+     * tree.
+     */
     private class XmlHandler extends DefaultHandler
     {
         final String elementName;
         final StringBuilder buffer = new StringBuilder();
-        Map props = null;
+        Map<String, String> props = null;
 
         XmlHandler(String elementName)
         {
@@ -66,7 +75,7 @@ class Station extends LocatorImpl
                 }
                 if (props.containsKey("xml_url"))
                 {
-                    String value = (String) props.get("xml_url");
+                    String value = props.get("xml_url");
                     if (value.startsWith("http://weather.gov/"))
                     {
                         value = "http://www.weather.gov/".concat(value.substring(19));
@@ -99,12 +108,16 @@ class Station extends LocatorImpl
         {
             if (elementName.equals(qName))
             {
-                props = new LinkedHashMap();
+                props = new LinkedHashMap<String, String>();
                 buffer.setLength(0);
             }
         }
     }
 
+    /**
+     * No argument constructor. Loads the data file and populates the map and
+     * the 2-dimentional tree.
+     */
     Station()
     {
         try
@@ -123,6 +136,9 @@ class Station extends LocatorImpl
         }
     }
 
+    /**
+     * Returns filename of the data file.
+     */
     @Override
     String getFilename()
     {

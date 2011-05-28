@@ -31,9 +31,34 @@ import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
+/**
+ * This class fetches XML data from a URL and returns it as a
+ * {@link java.util.Map java.util.Map}. The data values in the XML should be
+ * in &lt;value&gt; children and be integers, and multiple data values will be
+ * combined into a range in the result map with the parent element name as the
+ * key.
+ * <p>
+ * For example, this data:
+ * <pre>
+ *    &lt;temperature&gt;
+ *        &lt;name&gt;Temperature&lt;/name&gt;
+ *        &lt;value&gt;84&lt;/value&gt;
+ *        &lt;value&gt;87&lt;/value&gt;
+ *        &lt;value&gt;94&lt;/value&gt;
+ *        &lt;value&gt;92&lt;/value&gt;
+ *        &lt;value&gt;89&lt;/value&gt;
+ *        &lt;value&gt;82&lt;/value&gt;
+ *        &lt;value&gt;77&lt;/value&gt;
+ *    &lt;/temperature&gt;
+ * </pre>
+ * will become key "temperature", value "77-94" in the result map.
+ */
 public class RangeXmlCallable
     implements Callable<Map<String, String>>
 {
+    /**
+     * Range values used while extracting values from the XML.
+     */
     private static class Range
     {
         int min = Integer.MAX_VALUE;
@@ -58,6 +83,9 @@ public class RangeXmlCallable
         }
     }
 
+    /**
+     * SAX parser data handler that populates the map.
+     */
     private static class XmlHandler extends DefaultHandler
     {
         Map<String, Range> rangeMap = new LinkedHashMap<String, Range>();
@@ -120,9 +148,19 @@ public class RangeXmlCallable
         }
     }
 
+    /**
+     * SAX parser factory.
+     */
     private static final SAXParserFactory factory;
 
+    /**
+     * The URL from which to retrieve the XML.
+     */
     private final String urlString;
+
+    /**
+     * The map where the extracted data is stored.
+     */
     private final Map<String, String> result = new LinkedHashMap<String, String>();
 
     static
@@ -131,11 +169,18 @@ public class RangeXmlCallable
         factory.setValidating(false);
     }
 
+    /**
+     * Constructor.
+     * @param urlString the URL from which to retrieve the XML
+     */
     public RangeXmlCallable(String urlString)
     {
         this.urlString = urlString;
     }
 
+    /**
+     * Returns the map of data extracted.
+     */
     @Override
     public Map<String, String> call()
         throws Exception
@@ -163,31 +208,4 @@ public class RangeXmlCallable
         }
         return handler.getMap();
     }
-
-//    public static void main(String[] args)
-//        throws IOException
-//    {
-//        SAXParserFactory factory = SAXParserFactory.newInstance();
-//        factory.setValidating(false);
-//        
-//        XmlHandler handler = new XmlHandler();
-//        URL url = new URL("http://www.weather.gov/forecasts/xml/sample_products/browser_interface/ndfdXMLclient.php?product=time-series&maxt=maxt&mint=mint&pop12=pop12&sky=sky&wspd=wspd&wgust=wgust&wdir=wdir&end=2011-05-17T14:45:00&lat=40.00&lon=-75.00");
-//        InputStream in = url.openStream();
-//        try
-//        {
-//            factory.newSAXParser().parse(in, handler);
-//        }
-//        catch (SAXException e)
-//        {
-//            LOG.log(Level.WARNING, "SAXException", e);
-//        }
-//        catch (ParserConfigurationException e)
-//        {
-//            LOG.log(Level.WARNING, "ParserConfigurationException", e);
-//        }
-//        in.close();
-//        
-//        System.out.println(handler);
-//    }
-
 }

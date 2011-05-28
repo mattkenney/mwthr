@@ -23,27 +23,63 @@ import java.util.regex.Pattern;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
+/**
+ * A utility class for matching request paths using regular expressions.
+ */
 public class PathMatcher
 {
+    /**
+     * Cache of compiled regular expressions.
+     */
     private static final ConcurrentMap<String, Pattern> cache = new ConcurrentHashMap<String, Pattern>();
+
+    /**
+     * The request paths.
+     */
     private final String path;
+
+    /**
+     * The most recent {@link java.util.regex.Matcher}.
+     */
     private Matcher last = null;
 
+    /**
+     * Constructor.
+     * @param path the request path
+     */
     public PathMatcher(String path)
     {
         this.path = path;
     }
 
+    /**
+     * Returns the substring captured by the specified group in the most recent
+     * match attempt, or <code>null</code> if the group did not match.
+     * @param n the request path
+     * @return the substring captured by the specified group
+     * @see java.util.regex.Matcher#group(int)
+     */
     public String group(int n)
     {
         return last.group(n);
     }
 
+    /**
+     * Returns the {@link java.util.regex.Matcher} from the most recent match
+     * attempt, or <code>null</code> if there has not been one.
+     * @return the {@link java.util.regex.Matcher} from the most recent match attempt
+     */
     public Matcher matcher()
     {
         return last;
     }
 
+    /**
+     * Tests the request path for this <code>PathMatcher</code> againts the
+     * specified regular expression pattern.
+     * @param patternString the regular expression pattern
+     * @return true if the request path matches the specified pattern
+     */
     public boolean matches(String patternString)
     {
         Pattern regex = cache.get(patternString);

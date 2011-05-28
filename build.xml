@@ -71,6 +71,7 @@
     <target name="compile" depends="copy,geoip" description="Compile the application servlet code">
         <mkdir dir="${war.dir}/WEB-INF/classes"/>
         <javac srcdir="java" destdir="${war.dir}/WEB-INF/classes" debug="true" includeantruntime="false">
+            <compilerarg value="-Xlint" />
             <classpath>
                 <fileset dir="${appengine.sdk}/lib/user">
                     <include name="*.jar"/>
@@ -218,4 +219,24 @@
         <javac srcdir="geoip/${geoip.api}/source" destdir="${war.dir}/WEB-INF/classes" debug="true" includeantruntime="false" />
     </target>
 
+    <target name="doc" depends="compile">
+        <mkdir dir="doc" />
+        <javadoc sourcepath="java" destdir="doc">
+            <classpath>
+                <fileset dir="${appengine.sdk}/lib/shared">
+                    <include name="*.jar"/>
+                </fileset>
+                <fileset dir="${war.dir}/WEB-INF/lib">
+                    <include name="*.jar" />
+                </fileset>
+                <pathelement path="${war.dir}/WEB-INF/classes" />
+            </classpath>
+            <link href="http://download.oracle.com/javase/6/docs/api/" />
+            <link href="http://download.oracle.com/javaee/6/api/" />
+        </javadoc>
+    </target>
+
+    <target name="docclean">
+        <delete dir="doc"/>
+    </target>
 </project>

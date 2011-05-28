@@ -28,10 +28,22 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+/**
+ * Package-private implementation of {@link com.mwthr.nws.Locator#CWA}.
+ * <p>The data file is from here (the name changes when updated):</p>
+ * http://www.weather.gov/geodata/catalog/wsom/data/bp01de10.dbx
+ * <p>The field names are from here:</p>
+ * http://www.weather.gov/geodata/catalog/wsom/html/cntyzone.htm
+ */
 class CountyWarningArea extends LocatorImpl
 {
+    /**
+     * Charset of the data file.
+     */
     private static final Charset LOAD_CHARSET;
 
+    // the data file is in windows-1252, but fall back to ISO-8859-1
+    // if windows-1252 charset is not avialable
     static
     {
         Charset encoding = null;
@@ -46,6 +58,10 @@ class CountyWarningArea extends LocatorImpl
         LOAD_CHARSET = encoding;
     }
 
+    /**
+     * No argument constructor. Loads the data file and populates the map and
+     * the2-dimentional tree.
+     */
     CountyWarningArea()
     {
         try
@@ -55,7 +71,7 @@ class CountyWarningArea extends LocatorImpl
             BufferedReader lines = new BufferedReader(new InputStreamReader(in, LOAD_CHARSET));
             for (String line = lines.readLine(); line != null; line = lines.readLine())
             {
-                Map props = parseLine(line);
+                Map<String, String> props = parseLine(line);
                 double[] where = getCoordinates(props);
                 if (where != null && props.containsKey("zone") && props.containsKey("name") && props.containsKey("state") && props.containsKey("fips"))
                 {
@@ -72,9 +88,13 @@ class CountyWarningArea extends LocatorImpl
         }
     }
 
-    Map parseLine(String line)
+    /**
+     * Parses the location properties for one location/line in the data file.
+     * The fields are pipe delimited.
+     */
+    Map<String, String> parseLine(String line)
     {
-        Map props = new LinkedHashMap(11);
+        Map<String, String> props = new LinkedHashMap<String, String>(11);
         if (line != null)
         {
             final int length = line.length();

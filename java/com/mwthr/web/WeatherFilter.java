@@ -38,22 +38,53 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+/**
+ * This filter adds weather data properties maps to requests.
+ * The observation station location properties map must already have been
+ * added to the request by the {@link com.mwthr.web.LocatorFilter}.
+ * Current conditions and forecasts are retrieved from the
+ * <a href="http://www.weather.gov/">US NWS</a>.
+ */
 public class WeatherFilter implements Filter
 {
-    private FilterConfig config = null;
-    private Map cache = null;
+    /**
+     * Empty weather properties map used in cache so that we won't try to get
+     * them again for one hour.
+     */
+    @SuppressWarnings("unchecked") // empty map has no generic type parameters
+    private static final Map<String, String> EMPTY_PROPS = Collections.EMPTY_MAP;
 
+    /**
+     * The <code>FilterConfig</code> passed to
+     * {@link com.mwthr.web.WeatherFilter#init}.
+     */
+    private FilterConfig config = null;
+
+    /**
+     * Reference to the memcache from the servlet context.
+     */
+    private Map<Object, Object> cache = null;
+
+    /**
+     * No argument constructor.
+     */
     public WeatherFilter()
     {
     }
 
-    private void addCurrent(HttpServletRequest request, Map cache, Map station)
+    /**
+     * Adds the current conditions weather properties for the specified
+     * station to the request.
+     * @param request the request
+     * @param station the station properties map
+     */
+    private void addCurrent(HttpServletRequest request, Map<String, String> station)
     {
         String key = "current." + station.get("station_id");
-        Map current = (Map) cache.get(key);
+        Map<String, String> current = getProperties(key);
         if (current == null)
         {
-            String urlString = (String) station.get("xml_url_www");
+            String urlString = station.get("xml_url_www");
 
             // hit weather.gov for the data
             try
@@ -69,7 +100,7 @@ public class WeatherFilter implements Filter
             // so we put an empty map in the cache
             if (current == null)
             {
-                current = Collections.EMPTY_MAP;
+                current = EMPTY_PROPS;
             }
 
             // cache it
@@ -78,10 +109,16 @@ public class WeatherFilter implements Filter
         request.setAttribute("current", current);
     }
 
-    private void addForecast(HttpServletRequest request, Map cache, Map station)
+    /**
+     * Adds the forecast weather properties for the specified station to the
+     * request.
+     * @param request the request
+     * @param station the station properties map
+     */
+    private void addForecast(HttpServletRequest request, Map<String, String> station)
     {
         String key = "forecast." + station.get("station_id");
-        Map forecast = (Map) cache.get(key);
+        Map<String, String> forecast = getProperties(key);
         if (forecast == null)
         {
             // UTC end time 28 hours in the future
@@ -122,7 +159,7 @@ public class WeatherFilter implements Filter
             // so we put an empty map in the cache
             if (forecast == null)
             {
-                forecast = Collections.EMPTY_MAP;
+                forecast = EMPTY_PROPS;
             }
 
             // cache it
@@ -131,11 +168,17 @@ public class WeatherFilter implements Filter
         request.setAttribute("forecast", forecast);
     }
 
+    /**
+     * See {@link javax.servlet.Filter#destroy}.
+     */
     @Override
     public void destroy()
     {
     }
 
+    /**
+     * See {@link javax.servlet.Filter#doFilter}.
+     */
     @Override
     public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain)
         throws IOException, ServletException
@@ -143,20 +186,45 @@ public class WeatherFilter implements Filter
         HttpServletRequest request = (HttpServletRequest) req;
         HttpServletResponse response = (HttpServletResponse) res;
 
-        ServletContext context = config.getServletContext();
-        Map cache = (Map) context.getAttribute("cache");
-        Map station = (Map) request.getAttribute("station");
-
+        Map<String, String> station = getStation(request);
         if (station != null)
         {
-            addCurrent(request, cache, station);
-            addForecast(request, cache, station);
+            addCurrent(request, station);
+            addForecast(request, station);
         }
 
         chain.doFilter(request, response);
     }
 
+    /**
+     * Returns the properties map for the specified key from the memcache.
+     * @param key the key
+     * @return the observation station location properties map
+     */
+    @SuppressWarnings("unchecked")
+    private Map<String, String> getProperties(String key)
+    {
+        return (Map) cache.get(key);
+    }
+
+    /**
+     * Returns the observation station location properties map set by
+     * {@link com.wthr.web.LocationFilter}, or <code>null</code> if no
+     * location was set.
+     * @param request the request
+     * @return the observation station location properties map
+     */
+    @SuppressWarnings("unchecked")
+    private Map<String, String> getStation(HttpServletRequest request)
+    {
+        return (Map) request.getAttribute("station");
+    }
+
+    /**
+     * See {@link javax.servlet.Filter#init}.
+     */
     @Override
+    @SuppressWarnings("unchecked")
     public void init(FilterConfig config)
         throws ServletException
     {

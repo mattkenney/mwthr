@@ -33,17 +33,38 @@ import javax.servlet.ServletRequest;
 import com.maxmind.geoip.Location;
 import com.maxmind.geoip.LookupService;
 
+/**
+ * Provides IP address geolocation using GeoLite data created by MaxMind,
+ * available from <a href="http://www.maxmind.com/">http://www.maxmind.com/</a>.
+ */
 public class GeoIP
 {
+    /**
+     * This private constructor indicates that this is a static class.
+     */
     private GeoIP()
     {
     }
 
+    /**
+     * Returns the latitude/longitude of the remote IP address from the
+     * specified request, or <code>null</code> if it cannot be found.
+     * @param context the servlet context
+     * @param request the servlet request
+     * @return the latitude/longitude of the remote IP address
+     */
     public static double[] getCoordinates(ServletContext context, ServletRequest request)
     {
         return getCoordinates(context, request.getRemoteAddr());
     }
 
+    /**
+     * Returns the latitude/longitude of the specified IP address, or
+     * <code>null</code> if it cannot be found.
+     * @param context the servlet context
+     * @param ipString the IP address in dotted-decimal form
+     * @return the latitude/longitude of the specified IP address
+     */
     public static double[] getCoordinates(ServletContext context, String ipString)
     {
         double[] result = null;
@@ -71,6 +92,13 @@ public class GeoIP
         return result;
     }
 
+    /**
+     * Returns the MaxMind GeoLite data as a byte array. The data must be in
+     * split files with names "xaa", "xab", etc., as produced by
+     * <a href="http://www.gnu.org/s/coreutils/manual/html_node/split-invocation.html#split-invocation">
+     * Gnu <code>split</code></a>. This is necessary because Google App Engine
+     * limits uploaded files to 10 MB.
+     */
     private static byte[] getSplitData(ServletContext context, String path)
         throws IOException
     {

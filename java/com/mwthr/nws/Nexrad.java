@@ -28,10 +28,22 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+/**
+ * Package-private implementation of {@link com.mwthr.nws.Locator#NEXRAD}.
+ * <p>The data file is from here:</p>
+ * https://mi3.ncdc.noaa.gov//mi3report/MISC/nexrad-stations.TXT
+ */
 class Nexrad extends LocatorImpl
 {
+    /**
+     * Charset of the data file.
+     */
     private static final Charset LOAD_CHARSET = Charset.forName("UTF-8");
 
+    /**
+     * No argument constructor. Loads the data file and populates the map and
+     * the 2-dimentional tree.
+     */
     Nexrad()
     {
         try
@@ -41,7 +53,7 @@ class Nexrad extends LocatorImpl
             BufferedReader lines = new BufferedReader(new InputStreamReader(in, LOAD_CHARSET));
             for (String line = lines.readLine(); line != null; line = lines.readLine())
             {
-                Map props = parseLine(line);
+                Map<String, String> props = parseLine(line);
                 double[] where = getCoordinates(props);
                 if (where != null && props.containsKey("icao") && props.containsKey("name"))
                 {
@@ -58,7 +70,11 @@ class Nexrad extends LocatorImpl
         }
     }
 
-    String parseField(Map props, String key, String line, int length, int start, int end)
+    /**
+     * Extracts, trims, and stores one property for one location/line in the
+     * data file, if it is non-empty.
+     */
+    String parseField(Map<String, String> props, String key, String line, int length, int start, int end)
     {
         String result = null;
         int stop = (end < length) ? end : length;
@@ -70,9 +86,13 @@ class Nexrad extends LocatorImpl
         return result;
     }
 
-    Map parseLine(String line)
+    /**
+     * Parses the location properties for one location/line in the data file.
+     * The fields are fixed width.
+     */
+    Map<String, String> parseLine(String line)
     {
-        Map props = new LinkedHashMap(12);
+        Map<String, String> props = new LinkedHashMap<String, String>(12);
         if (line != null)
         {
             final int length = line.length();

@@ -23,15 +23,34 @@ import java.util.Map;
 
 import net.sf.javaml.core.kdtree.KDTree;
 
+/**
+ * Package-private abstract base class for objects that provide the
+ * implementations of the {@link com.mwthr.nws.Locator} enum entries.
+ */
 abstract class LocatorImpl
 {
+    /**
+     * 2-dimensional tree of property maps.
+     */
     final KDTree tree = new KDTree(2);
-    final Map codeMap = new HashMap();
 
+    /**
+     * Map of location codes to property maps.
+     */
+    final Map<String, Map<String, String>> codeMap = new HashMap<String, Map<String, String>>();
+
+    /**
+     * No argument constructor.
+     */
     LocatorImpl()
     {
     }
 
+    /**
+     * Returns the latitude/longitude from a properties map, or
+     * <code>null</code> if the map does not contain a valid latitude/longitude
+     * pair.
+     */
     double[] getCoordinates(Map props)
     {
         double[] result = null;
@@ -56,6 +75,9 @@ abstract class LocatorImpl
         return result;
     }
 
+    /**
+     * Returns filename of the data file for the location type.
+     */
     String getFilename()
     {
         String result = getClass().getName();
@@ -68,11 +90,17 @@ abstract class LocatorImpl
         return result;
     }
 
-    Map getMap()
+    /**
+     * Returns the internal map of location codes to property maps.
+     */
+    Map<String, Map<String, String>> getMap()
     {
         return codeMap;
     }
 
+    /**
+     * Returns the internal 2-dimensional tree of property maps.
+     */
     KDTree getKDTree()
     {
         return tree;

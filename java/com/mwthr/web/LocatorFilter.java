@@ -32,19 +32,37 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.mwthr.nws.Locator;
 
+/**
+ * This filter functions as the controller for the application. It determines
+ * what data to display based on the request and forwards to the appropriate
+ * page.
+ */
 public class LocatorFilter implements Filter
 {
+    /**
+     * The <code>FilterConfig</code> passed to
+     * {@link com.mwthr.web.LocatorFilter#init}.
+     */
     private FilterConfig config = null;
 
+    /**
+     * No argument constructor.
+     */
     public LocatorFilter()
     {
     }
 
+    /**
+     * See {@link javax.servlet.Filter#destroy}.
+     */
     @Override
     public void destroy()
     {
     }
 
+    /**
+     * See {@link javax.servlet.Filter#doFilter}.
+     */
     @Override
     public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain)
         throws IOException, ServletException
@@ -53,9 +71,9 @@ public class LocatorFilter implements Filter
         HttpServletResponse response = (HttpServletResponse) res;
 
         PathMatcher path = new PathMatcher(request.getRequestURI());
-        Map station = null;
-        Map cwa = null;
-        Map radar = null;
+        Map<String, String> station = null;
+        Map<String, String> cwa = null;
+        Map<String, String> radar = null;
         boolean showPicker = false;
 
         if (path.matches("^/+$"))
@@ -143,6 +161,10 @@ public class LocatorFilter implements Filter
         dispatcher.forward(request, response);
     }
 
+    /**
+     * Returns the latitude/longitude from request parameters, or null
+     * if not present or not valid.
+     */
     double[] getCoordinates(HttpServletRequest request)
     {
         double[] result = null;
@@ -167,6 +189,9 @@ public class LocatorFilter implements Filter
         return result;
     }
 
+    /**
+     * See {@link javax.servlet.Filter#init}.
+     */
     @Override
     public void init(FilterConfig config)
         throws ServletException
