@@ -34,7 +34,7 @@ import net.sf.jsr107cache.CacheManager;
  * This <code>ServletContextListener</code> creates a
  * <a href="http://jcp.org/en/jsr/detail?id=107">JSR 107</a> cache and stores a
  * reference to it as a servlet context attribute with name "cache". The cache
- * implements {@link java.util.Map java.util.Map} interface.
+ * implements the {@link java.util.Map java.util.Map} interface.
  * <p>
  * To use, include the following in the
  * deployment descriptor (web.xml):

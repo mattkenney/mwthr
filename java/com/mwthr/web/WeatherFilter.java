@@ -87,13 +87,16 @@ public class WeatherFilter implements Filter
             String urlString = station.get("xml_url_www");
 
             // hit weather.gov for the data
-            try
+            for (int i = 0; current == null && i < 2; i++)
             {
-                current = new RestXmlCallable(urlString, "current_observation").call();
-            }
-            catch (Exception e)
-            {
-                Logger.getLogger(getClass().getName()).log(Level.WARNING, "Problem getting \"" + urlString + "\"", e);
+                try
+                {
+                    current = new RestXmlCallable(urlString, "current_observation").call();
+                }
+                catch (Exception e)
+                {
+                    Logger.getLogger(getClass().getName()).log(Level.WARNING, "Problem getting \"" + urlString + "\"", e);
+                }
             }
 
             // we want to cache failure for one hour too
@@ -146,13 +149,16 @@ public class WeatherFilter implements Filter
             String urlString = buffer.toString();
 
             // hit weather.gov for the data
-            try
+            for (int i = 0; forecast == null && i < 2; i++)
             {
-                forecast = new RangeXmlCallable(urlString).call();
-            }
-            catch (Exception e)
-            {
-                Logger.getLogger(getClass().getName()).log(Level.WARNING, "Problem getting \"" + urlString + "\"", e);
+                try
+                {
+                    forecast = new RangeXmlCallable(urlString).call();
+                }
+                catch (Exception e)
+                {
+                    Logger.getLogger(getClass().getName()).log(Level.WARNING, "Problem getting \"" + urlString + "\"", e);
+                }
             }
 
             // we want to cache failure for one hour too

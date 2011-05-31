@@ -35,8 +35,8 @@
 <table class="summary">
 <tbody>
 <tr><td class="label">County/Area:</td><td colspan="2"><c:out value="${cwa.name}, ${cwa.state}" /></td></tr>
-<tr><td class="label">Now:</td><td colspan="2"><c:out value="${current.temp_f}" /><c:if test="${empty current.temp_f}">?</c:if> &#176;F, <c:out value="${current.weather}" /></td></tr>
-<tr><td class="label">Next 24 hours:</td><td colspan="2"><c:out value="${forecast.temperature}" /><c:if test="${empty forecast.temperature}">?</c:if> &#176;F, <c:out value="${forecast['probability-of-precipitation']}" />% chance of precipitation</td></tr>
+<tr><td class="label">Now:</td><td colspan="2"><c:if test="${empty current.temp_f}">?</c:if><c:out value="${current.temp_f}" /> &#176;F<c:if test="${!empty current.weather}">, <c:out value="${current.weather}" /></c:if></td></tr>
+<tr><td class="label">Next 24 hours:</td><td colspan="2"><c:if test="${empty forecast.temperature}">?</c:if><c:out value="${forecast.temperature}" /> &#176;F<c:if test="${!empty forecast['probability-of-precipitation']}">, <c:out value="${forecast['probability-of-precipitation']}" />% chance of precipitation</c:if></td></tr>
 <tr><td class="label">Radar:</td><td><c:out value="${radar.name}" /></td><td class="option"><a href="/icao/">change location</a></td></tr>
 </tbody>
 </table>
@@ -44,7 +44,7 @@
 <input id="jsloop" name="jsloop" type="hidden" value="<c:out value="${radar.baseurl}" />" />
 <table class="subtle">
 <tbody>
-<tr><td>Like? Don't like? Let me know, matt<img alt="" src="/images/at.png" />mwthr.com</td></tr>
+<tr><td>Like? Don't like? Let me know: matt<img alt="" src="/images/at.png" />mwthr.com</td></tr>
 </tbody>
 </table>
 </div>

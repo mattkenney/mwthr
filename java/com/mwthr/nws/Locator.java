@@ -87,7 +87,7 @@ public enum Locator
      * @param props the property {@link java.util.Map} of another location
      * @return the property {@link java.util.Map} for the nearest location
      */
-    public Map<String, String> nearest(Map props)
+    public Map<String, String> nearest(Map<String, String> props)
     {
         double[] where = (props == null) ? null : implementation.getCoordinates(props);
         return nearest(where);

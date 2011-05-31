@@ -51,11 +51,11 @@ abstract class LocatorImpl
      * <code>null</code> if the map does not contain a valid latitude/longitude
      * pair.
      */
-    double[] getCoordinates(Map props)
+    double[] getCoordinates(Map<String, String> props)
     {
         double[] result = null;
-        String lat = (String) props.get("lat");
-        String lon = (String) props.get("lon");
+        String lat = props.get("lat");
+        String lon = props.get("lon");
         if (lat != null && lon != null)
         {
             try
