@@ -18,6 +18,9 @@
  */
 package com.mwthr.nws;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -80,10 +83,31 @@ public enum Locator
     }
 
     /**
-     * Returns the property {@link java.util.Map} for the location nearest the
+     * Returns the property {@link java.util.Map}s for the <code>n</code>
+     * locations nearest the to the specified latitude/longitude, in order
+     * of increasing Mercator distance.
+     * @param where [ latitude, longitude ]
+     * @param n the number of locations to return
+     * @return the property {@link java.util.Map} for the nearest location
+     */
+    @SuppressWarnings("unchecked") // KDTree is not Java 5 generic
+    public List<Map<String, String>> nearest(double[] where, int n)
+    {
+        List<Map<String, String>> result = new ArrayList<Map<String, String>>();
+        // uses nearest-neighbor logic from net.sf.javaml.core.kdtree.KDTree
+        Object[] neighbors = ((where == null) ? null : implementation.getKDTree().nearest(where, n));
+        for (int i = 0; neighbors != null && i < neighbors.length; i++)
+        {
+            result.add((Map<String, String>) neighbors[i]);
+        }
+        return result;
+    }
+
+    /**
+     * Returns the property {@link java.util.Map} for the location nearest to the
      * specified location. The props map must contain "lat" and "lon" properties
      * containing the latitude and longitude of that location. This method
-     * will find the location of one type nearest a location of another type.
+     * will find the location of one type nearest to a location of another type.
      * @param props the property {@link java.util.Map} of another location
      * @return the property {@link java.util.Map} for the nearest location
      */
@@ -91,5 +115,22 @@ public enum Locator
     {
         double[] where = (props == null) ? null : implementation.getCoordinates(props);
         return nearest(where);
+    }
+
+    /**
+     * Returns the property {@link java.util.Map}s for the <code>n</code>
+     * locations nearest to the the specified location, in order of
+     * increasing Mercator distance. The props map must contain "lat" and
+     * "lon" properties containing the latitude and longitude of that
+     * location. This method will find the locations of one type nearest to
+     * a location of another type.
+     * @param props the property {@link java.util.Map} of another location
+     * @param n the neighbor to return, &gt;= 1
+     * @return the property {@link java.util.Map} for the nearest location
+     */
+    public List<Map<String, String>> nearest(Map<String, String> props, int n)
+    {
+        double[] where = (props == null) ? null : implementation.getCoordinates(props);
+        return nearest(where, n);
     }
 }

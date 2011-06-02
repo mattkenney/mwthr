@@ -19,6 +19,8 @@
 package com.mwthr.web;
 
 import java.io.IOException;
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -39,6 +41,11 @@ import com.mwthr.nws.Locator;
  */
 public class LocatorFilter implements Filter
 {
+    /**
+     * The number of nearest observation stations to find.
+     */
+    private static final int STATION_COUNT = 4;
+
     /**
      * The <code>FilterConfig</code> passed to
      * {@link com.mwthr.web.LocatorFilter#init}.
@@ -71,6 +78,7 @@ public class LocatorFilter implements Filter
         HttpServletResponse response = (HttpServletResponse) res;
 
         PathMatcher path = new PathMatcher(request.getRequestURI());
+        List<Map<String, String>> stations = null;
         Map<String, String> station = null;
         Map<String, String> cwa = null;
         Map<String, String> radar = null;
@@ -79,25 +87,23 @@ public class LocatorFilter implements Filter
         if (path.matches("^/+$"))
         {
             double[] where = getCoordinates(request);
-            station = Locator.STATION.nearest(where);
+            stations = Locator.STATION.nearest(where, STATION_COUNT);
+            station = stations.isEmpty() ? null : stations.get(0);
             showPicker = (station == null);
-//            if (station != null)
-//            {
-//                response.sendRedirect("/station/" + String.valueOf(station.get("station_id")).toLowerCase());
-//                return;
-//            }
             if (showPicker)
             {
                 where = GeoIP.getCoordinates(config.getServletContext(), request);
+                stations = Locator.STATION.nearest(where, STATION_COUNT);
+                station = stations.isEmpty() ? null : stations.get(0);
             }
-            station = Locator.STATION.nearest(where);
             cwa = Locator.CWA.nearest(where);
             radar = Locator.NEXRAD.nearest(where);
         }
         else if (path.matches("^/+icao/+([a-z]{4})$"))
         {
             radar = Locator.NEXRAD.get(path.group(1).toUpperCase());
-            station = Locator.STATION.nearest(radar);
+            stations = Locator.STATION.nearest(radar, STATION_COUNT);
+            station = stations.isEmpty() ? null : stations.get(0);
             cwa = Locator.CWA.nearest(radar);
             if (station == null || cwa == null)
             {
@@ -108,7 +114,8 @@ public class LocatorFilter implements Filter
         else if (path.matches("^/+cwa/+([0-9]{3})$"))
         {
             cwa = Locator.CWA.get(path.group(1).toUpperCase());
-            station = Locator.STATION.nearest(cwa);
+            stations = Locator.STATION.nearest(cwa, STATION_COUNT);
+            station = stations.isEmpty() ? null : stations.get(0);
             radar = Locator.NEXRAD.nearest(cwa);
             if (station == null || radar == null)
             {
@@ -126,6 +133,7 @@ public class LocatorFilter implements Filter
                 response.sendError(404);
                 return;
             }
+            stations = Collections.singletonList(station);
         }
         else if (path.matches("^/+((cwa)|(icao)|(station))/+$"))
         {
@@ -142,11 +150,12 @@ public class LocatorFilter implements Filter
             return;
         }
 
+        request.setAttribute("stations", stations);
         request.setAttribute("station", station);
         request.setAttribute("cwa", cwa);
         request.setAttribute("radar", radar);
         RequestDispatcher dispatcher = null;
-        if (cwa == null || radar == null || station == null)
+        if (cwa == null || radar == null || stations == null || station == null)
         {
             dispatcher = request.getRequestDispatcher("/national.jsp");
         }

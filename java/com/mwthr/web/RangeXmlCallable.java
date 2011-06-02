@@ -18,7 +18,9 @@
  */
 package com.mwthr.web;
 
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.StringReader;
 import java.net.URL;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -28,6 +30,7 @@ import java.util.logging.Logger;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 import org.xml.sax.Attributes;
+import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
@@ -91,6 +94,7 @@ public class RangeXmlCallable
         Map<String, Range> rangeMap = new LinkedHashMap<String, Range>();
         StringBuilder buffer = new StringBuilder();
         String key = null;
+        String creationDate = null;
 
         @Override
         public void characters(char[] ch, int start, int length)
@@ -121,6 +125,10 @@ public class RangeXmlCallable
                     // ignore
                 }
             }
+            else if ("creation-date".equals(qName))
+            {
+                creationDate = buffer.toString();
+            }
         }
 
         Map<String, String> getMap()
@@ -130,14 +138,25 @@ public class RangeXmlCallable
             {
                 result.put(entry.getKey(), String.valueOf(entry.getValue()));
             }
+            if (creationDate != null)
+            {
+                result.put("creation-date", creationDate);
+            }
             return result;
+        }
+
+        @Override
+        public InputSource resolveEntity(String publicID, String systemID)
+            throws IOException, SAXException
+        {
+            return new InputSource(new StringReader(""));
         }
 
         @Override
         public void startElement(String uri, String localName, String qName, Attributes attributes)
             throws SAXException
         {
-            if ("value".equals(qName) || "name".equals(qName))
+            if ("value".equals(qName) || "name".equals(qName) || "creation-date".equals(qName))
             {
                 buffer.setLength(0);
             }

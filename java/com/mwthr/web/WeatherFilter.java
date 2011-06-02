@@ -21,8 +21,12 @@ package com.mwthr.web;
 import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.text.ParseException;
 import java.util.Calendar;
 import java.util.Collections;
+import java.util.Date;
+import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.TimeZone;
@@ -38,6 +42,8 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.mwthr.nws.Locator;
+
 /**
  * This filter adds weather data properties maps to requests.
  * The observation station location properties map must already have been
@@ -48,11 +54,9 @@ import javax.servlet.http.HttpServletResponse;
 public class WeatherFilter implements Filter
 {
     /**
-     * Empty weather properties map used in cache so that we won't try to get
-     * them again for one hour.
+     * The time after which a cache entry will not be considered valid; 3600000 ms.
      */
-    @SuppressWarnings("unchecked") // empty map has no generic type parameters
-    private static final Map<String, String> EMPTY_PROPS = Collections.EMPTY_MAP;
+    private static final long CACHE_LIFE = 3600000L;
 
     /**
      * The <code>FilterConfig</code> passed to
@@ -78,36 +82,62 @@ public class WeatherFilter implements Filter
      * @param request the request
      * @param station the station properties map
      */
-    private void addCurrent(HttpServletRequest request, Map<String, String> station)
+    private void addCurrent(HttpServletRequest request)
     {
-        String key = "current." + station.get("station_id");
-        Map<String, String> current = getProperties(key);
-        if (current == null)
+        // get max timestamp for a valid cache entry
+        long cutoff = System.currentTimeMillis() - CACHE_LIFE;
+
+        List<Map<String, String>> stations = getStations(request);
+
+        // get the cached current observations, if present
+        Map<String, String> current = null;
+        DateFormat format = getRfc822DateFormat();
+        for (int n = 0; stations != null && n < stations.size(); n++)
         {
-            String urlString = station.get("xml_url_www");
+            Map<String, String> station = stations.get(n);
+            String key = "current." + station.get("station_id");
+            current = getProperties(key);
+            String text = (current == null) ? null : current.get("observation_time_rfc822");
+            long timestamp = parseDate(format, text);
 
-            // hit weather.gov for the data
-            for (int i = 0; current == null && i < 2; i++)
+            // get a new current observations if there is not a recent cached one
+            if (cutoff > timestamp)
             {
-                try
+                String urlString = station.get("xml_url_www");
+
+                // hit weather.gov for the data, up to two attempts
+                for (int i = 0; current == null && i < 2; i++)
                 {
-                    current = new RestXmlCallable(urlString, "current_observation").call();
+                    try
+                    {
+                        current = new RestXmlCallable(urlString, "current_observation").call();
+                    }
+                    catch (Exception e)
+                    {
+                        Logger.getLogger(getClass().getName()).log(Level.WARNING, "Problem getting \"" + urlString + "\"", e);
+                    }
                 }
-                catch (Exception e)
+
+                // we want to cache failure for one hour too
+                // so we put an fake map in the cache
+                text = (current == null) ? null : current.get("observation_time_rfc822");
+                timestamp = parseDate(format, text);
+                if (cutoff > timestamp)
                 {
-                    Logger.getLogger(getClass().getName()).log(Level.WARNING, "Problem getting \"" + urlString + "\"", e);
+                    current = new LinkedHashMap<String, String>();
+                    current.put("observation_time_rfc822", format.format(new Date()));
                 }
+
+                // cache it
+                cache.put(key, current);
             }
 
-            // we want to cache failure for one hour too
-            // so we put an empty map in the cache
-            if (current == null)
+            // if the station's observations are recent, make it THE station
+            if (cutoff <= timestamp)
             {
-                current = EMPTY_PROPS;
+                request.setAttribute("station", station);
+                break;
             }
-
-            // cache it
-            cache.put(key, current);
         }
         request.setAttribute("current", current);
     }
@@ -118,60 +148,75 @@ public class WeatherFilter implements Filter
      * @param request the request
      * @param station the station properties map
      */
-    private void addForecast(HttpServletRequest request, Map<String, String> station)
+    private void addForecast(HttpServletRequest request)
     {
-        String key = "forecast." + station.get("station_id");
-        Map<String, String> forecast = getProperties(key);
-        if (forecast == null)
+        // get max timestamp for a valid cache entry
+        long cutoff = System.currentTimeMillis() - CACHE_LIFE;
+
+        Map<String, String> station = getStation(request);
+
+        if (station != null)
         {
-            // UTC end time 28 hours in the future
-            // since forecast periods can be three hours and we cache for one hour
-            // we add four hours to capture all possible extremes
-            DateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.US);
-            format.setTimeZone(TimeZone.getTimeZone("GMT"));
-            Calendar cal = format.getCalendar();
-            cal.setTimeInMillis(System.currentTimeMillis());
-            cal.add(Calendar.HOUR_OF_DAY, 28);
-            cal.set(Calendar.MINUTE, 0);
-            cal.set(Calendar.SECOND, 0);
-            cal.set(Calendar.MILLISECOND, 0);
+            // get the cached forecast, if present
+            String key = "forecast." + station.get("station_id");
+            Map<String, String> forecast = getProperties(key);
 
-            // build the NDFD URL
-            StringBuilder buffer = new StringBuilder();
-            buffer.append("http://www.weather.gov/forecasts/xml/sample_products/browser_interface/ndfdXMLclient.php");
-            buffer.append("?product=time-series&maxt=maxt&mint=mint&pop12=pop12&sky=sky&wspd=wspd&wgust=wgust&wdir=wdir");
-            buffer.append("&end=");
-            buffer.append(format.format(cal.getTime()));
-            buffer.append("&lat=");
-            buffer.append(station.get("lat"));
-            buffer.append("&lon=");
-            buffer.append(station.get("lon"));
-            String urlString = buffer.toString();
+            // get the timestamp of the forecast
+            DateFormat format = getIsoDateFormat();
+            String text = (forecast == null) ? null : forecast.get("creation-date");
+            long timestamp = parseDate(format, text);
 
-            // hit weather.gov for the data
-            for (int i = 0; forecast == null && i < 2; i++)
+            // get a new forecast if there is not a recent cached one
+            if (cutoff > timestamp)
             {
-                try
-                {
-                    forecast = new RangeXmlCallable(urlString).call();
-                }
-                catch (Exception e)
-                {
-                    Logger.getLogger(getClass().getName()).log(Level.WARNING, "Problem getting \"" + urlString + "\"", e);
-                }
-            }
+                // UTC end time 28 hours in the future
+                // since forecast periods can be three hours and we cache for one hour
+                // we add four hours to capture all possible extremes
+                Calendar cal = format.getCalendar();
+                cal.setTimeInMillis(System.currentTimeMillis());
+                cal.add(Calendar.HOUR_OF_DAY, 28);
+                cal.set(Calendar.MINUTE, 0);
+                cal.set(Calendar.SECOND, 0);
+                cal.set(Calendar.MILLISECOND, 0);
 
-            // we want to cache failure for one hour too
-            // so we put an empty map in the cache
-            if (forecast == null)
-            {
-                forecast = EMPTY_PROPS;
-            }
+                // build the NDFD URL
+                StringBuilder buffer = new StringBuilder();
+                buffer.append("http://www.weather.gov/forecasts/xml/sample_products/browser_interface/ndfdXMLclient.php");
+                buffer.append("?product=time-series&maxt=maxt&mint=mint&pop12=pop12");
+                buffer.append("&end=");
+                buffer.append(format.format(cal.getTime()));
+                buffer.append("&lat=");
+                buffer.append(station.get("lat"));
+                buffer.append("&lon=");
+                buffer.append(station.get("lon"));
+                String urlString = buffer.toString();
 
-            // cache it
-            cache.put(key, forecast);
+                // hit weather.gov for the data, up to two attempts
+                for (int i = 0; forecast == null && i < 2; i++)
+                {
+                    try
+                    {
+                        forecast = new RangeXmlCallable(urlString).call();
+                    }
+                    catch (Exception e)
+                    {
+                        Logger.getLogger(getClass().getName()).log(Level.WARNING, "Problem getting \"" + urlString + "\"", e);
+                    }
+                }
+
+                // we want to cache failure for one hour too
+                // so we put an fake map in the cache
+                if (forecast == null)
+                {
+                    forecast = new LinkedHashMap<String, String>();
+                    forecast.put("creation-date", format.format(new Date()));
+                }
+
+                // cache it
+                cache.put(key, forecast);
+            }
+            request.setAttribute("forecast", forecast);
         }
-        request.setAttribute("forecast", forecast);
     }
 
     /**
@@ -192,18 +237,14 @@ public class WeatherFilter implements Filter
         HttpServletRequest request = (HttpServletRequest) req;
         HttpServletResponse response = (HttpServletResponse) res;
 
-        Map<String, String> station = getStation(request);
-        if (station != null)
-        {
-            addCurrent(request, station);
-            addForecast(request, station);
-        }
+        addCurrent(request);
+        addForecast(request);
 
         chain.doFilter(request, response);
     }
 
     /**
-     * Returns the properties map for the specified key from the memcache.
+     * Returns the properties map for the specified key from the cache.
      * @param key the key
      * @return the observation station location properties map
      */
@@ -211,6 +252,28 @@ public class WeatherFilter implements Filter
     private Map<String, String> getProperties(String key)
     {
         return (Map) cache.get(key);
+    }
+
+    /**
+     * Returns a new UTC ISO 8601 <code>DateFormat</code>.
+     * @return a new UTC ISO 8601 <code>DateFormat</code>
+     */
+    private DateFormat getIsoDateFormat()
+    {
+        DateFormat result = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.US);
+        result.setTimeZone(TimeZone.getTimeZone("GMT"));
+        return result;
+    }
+
+    /**
+     * Returns a new UTC RFC 822 <code>DateFormat</code>.
+     * @return a new UTC RFC 822 <code>DateFormat</code>
+     */
+    private DateFormat getRfc822DateFormat()
+    {
+        DateFormat result = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss Z", Locale.US);
+        result.setTimeZone(TimeZone.getTimeZone("GMT"));
+        return result;
     }
 
     /**
@@ -224,6 +287,45 @@ public class WeatherFilter implements Filter
     private Map<String, String> getStation(HttpServletRequest request)
     {
         return (Map) request.getAttribute("station");
+    }
+
+    /**
+     * Returns the observation station locations properties maps set by
+     * {@link com.wthr.web.LocationFilter}, or <code>null</code> if no
+     * locations were set.
+     * @param request the request
+     * @return the observation station locations properties maps
+     */
+    @SuppressWarnings("unchecked")
+    private List<Map<String, String>> getStations(HttpServletRequest request)
+    {
+        return (List) request.getAttribute("stations");
+    }
+
+    /**
+     * Returns the milliseconds since the epoch parsed from the
+     * specified date string using the specified {@ java.text.DateFormat }.
+     * The return value is zero if the string is null or it cannot be parsed.
+     * @param format the <code>DateFormat</code>
+     * @param text the date string
+     * @return the miliseconds since the epoch
+     */
+    private long parseDate(DateFormat format, String text)
+    {
+        long result = 0L;
+        if (text != null)
+        {
+            try
+            {
+                Date when = format.parse(text);
+                result = when.getTime();
+            }
+            catch (ParseException e)
+            {
+                // just return 0L
+            }
+        }
+        return result;
     }
 
     /**

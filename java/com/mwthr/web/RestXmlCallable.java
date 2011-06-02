@@ -18,7 +18,9 @@
  */
 package com.mwthr.web;
 
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.StringReader;
 import java.net.URL;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -28,6 +30,7 @@ import java.util.logging.Logger;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 import org.xml.sax.Attributes;
+import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
@@ -71,6 +74,13 @@ public class RestXmlCallable
                 }
             }
             buffer.setLength(0);
+        }
+
+        @Override
+        public InputSource resolveEntity(String publicID, String systemID)
+            throws IOException, SAXException
+        {
+            return new InputSource(new StringReader(""));
         }
 
         @Override

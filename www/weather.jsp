@@ -23,12 +23,14 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <meta content="text/html;charset=UTF-8" http-equiv="Content-type" />
+<!-- source code: https://github.com/mattkenney/mwthr -->
 <meta content="initial-scale=1.0" name="viewport" />
 <link href="/images/logo.png" rel="apple-touch-icon" />
 <style type="text/css">
 <% pageContext.include("/css/default.css"); %>
 </style>
 <title>mwthr: <c:out value="${cwa.name}" />, <c:out value="${cwa.state}" /></title>
+<!-- station: <c:out value="${station.station_id}" /> -->
 </head>
 <body>
 <div>
@@ -37,7 +39,7 @@
 <tr><td class="label">County/Area:</td><td colspan="2"><c:out value="${cwa.name}, ${cwa.state}" /></td></tr>
 <tr><td class="label">Now:</td><td colspan="2"><c:if test="${empty current.temp_f}">?</c:if><c:out value="${current.temp_f}" /> &#176;F<c:if test="${!empty current.weather}">, <c:out value="${current.weather}" /></c:if></td></tr>
 <tr><td class="label">Next 24 hours:</td><td colspan="2"><c:if test="${empty forecast.temperature}">?</c:if><c:out value="${forecast.temperature}" /> &#176;F<c:if test="${!empty forecast['probability-of-precipitation']}">, <c:out value="${forecast['probability-of-precipitation']}" />% chance of precipitation</c:if></td></tr>
-<tr><td class="label">Radar:</td><td><c:out value="${radar.name}" /></td><td class="option"><a href="/icao/">change location</a></td></tr>
+<tr><td class="label">Radar:</td><td><c:out value="${radar.name}" /></td><td class="option"><a href="http://weather.noaa.gov/monitor/radar/" target="_blank">radar status</a> | <a href="/icao/">change location</a></td></tr>
 </tbody>
 </table>
 <noscript><img alt="radar" height="550" src="<c:out value="${radar.baseurl}" />Loop.gif" width="600" /></noscript>
