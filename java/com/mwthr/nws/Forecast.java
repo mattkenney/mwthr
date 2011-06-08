@@ -16,48 +16,31 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with mwthr.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.mwthr.web;
+package com.mwthr.nws;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringReader;
 import java.net.URL;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Locale;
 import java.util.Map;
-import java.util.concurrent.Callable;
+import java.util.TimeZone;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.xml.parsers.SAXParser;
-import javax.xml.parsers.SAXParserFactory;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
-/**
- * This class fetches XML data from a URL and returns it as a
- * {@link java.util.Map java.util.Map}. The data values in the XML should be
- * in &lt;value&gt; children and be integers, and multiple data values will be
- * combined into a range in the result map with the parent element name as the
- * key.
- * <p>
- * For example, this data:
- * <pre>
- *    &lt;temperature&gt;
- *        &lt;name&gt;Temperature&lt;/name&gt;
- *        &lt;value&gt;84&lt;/value&gt;
- *        &lt;value&gt;87&lt;/value&gt;
- *        &lt;value&gt;94&lt;/value&gt;
- *        &lt;value&gt;92&lt;/value&gt;
- *        &lt;value&gt;89&lt;/value&gt;
- *        &lt;value&gt;82&lt;/value&gt;
- *        &lt;value&gt;77&lt;/value&gt;
- *    &lt;/temperature&gt;
- * </pre>
- * will become key "temperature", value "77-94" in the result map.
- */
-public class RangeXmlCallable
-    implements Callable<Map<String, String>>
+public class Forecast
+    extends WeatherDataHandler
 {
     /**
      * Range values used while extracting values from the XML.
@@ -91,16 +74,36 @@ public class RangeXmlCallable
      */
     private static class XmlHandler extends DefaultHandler
     {
+        final Map<String, String> result;
         Map<String, Range> rangeMap = new LinkedHashMap<String, Range>();
         StringBuilder buffer = new StringBuilder();
         String key = null;
         String creationDate = null;
+
+        XmlHandler(Map<String, String> result)
+        {
+            this.result = result;
+        }
 
         @Override
         public void characters(char[] ch, int start, int length)
             throws SAXException
         {
             buffer.append(ch, start, length);
+        }
+
+        @Override
+        public void endDocument()
+            throws SAXException
+        {
+            for (Map.Entry<String, Range> entry : rangeMap.entrySet())
+            {
+                result.put(entry.getKey(), String.valueOf(entry.getValue()));
+            }
+            if (creationDate != null)
+            {
+                result.put("creation-date", creationDate);
+            }
         }
 
         @Override
@@ -131,20 +134,6 @@ public class RangeXmlCallable
             }
         }
 
-        Map<String, String> getMap()
-        {
-            Map<String, String> result = new LinkedHashMap<String, String>();
-            for (Map.Entry<String, Range> entry : rangeMap.entrySet())
-            {
-                result.put(entry.getKey(), String.valueOf(entry.getValue()));
-            }
-            if (creationDate != null)
-            {
-                result.put("creation-date", creationDate);
-            }
-            return result;
-        }
-
         @Override
         public InputSource resolveEntity(String publicID, String systemID)
             throws IOException, SAXException
@@ -168,63 +157,84 @@ public class RangeXmlCallable
     }
 
     /**
-     * SAX parser factory.
+     * 90 minutes.
      */
-    private static final SAXParserFactory factory;
+    private static final long CACHE_LIFE = 5400000L;
 
-    /**
-     * The URL from which to retrieve the XML.
-     */
-    private final String urlString;
+    private final DateFormat format;
 
-    /**
-     * The map where the extracted data is stored.
-     */
-    private final Map<String, String> result = new LinkedHashMap<String, String>();
+    private final List<Map<String, String>> stations;
 
-    static
-    {
-        factory = SAXParserFactory.newInstance();
-        factory.setValidating(false);
-    }
+    private final long cutoff;
 
     /**
      * Constructor.
-     * @param urlString the URL from which to retrieve the XML
+     * @param stations observation station properties maps
      */
-    public RangeXmlCallable(String urlString)
+    public Forecast(List<Map<String, String>> stations)
     {
-        this.urlString = urlString;
+        this.stations = stations;
+
+        // get max timestamp for a valid cache entry
+        cutoff = System.currentTimeMillis() - CACHE_LIFE;
+
+        // format for parsing observation timestamp
+        format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.US);
+        format.setTimeZone(TimeZone.getTimeZone("GMT"));
     }
 
-    /**
-     * Returns the map of data extracted.
-     */
-    @Override
-    public Map<String, String> call()
-        throws Exception
+    public List<URL> getURLs()
     {
-        InputStream in = null;
-        XmlHandler handler = new XmlHandler();
-        try
+        List<URL> result = new ArrayList<URL>();
+
+        // UTC end time 28 hours in the future
+        // since forecast periods can be three hours and we cache for one hour
+        // we add four hours to capture all possible extremes
+        Calendar cal = format.getCalendar();
+        cal.setTimeInMillis(System.currentTimeMillis());
+        cal.add(Calendar.HOUR_OF_DAY, 28);
+        cal.set(Calendar.MINUTE, 0);
+        cal.set(Calendar.SECOND, 0);
+        cal.set(Calendar.MILLISECOND, 0);
+        StringBuilder buffer = new StringBuilder();
+        buffer.append("http://www.weather.gov/forecasts/xml/sample_products/browser_interface/ndfdXMLclient.php");
+        buffer.append("?product=time-series&maxt=maxt&mint=mint&pop12=pop12");
+        buffer.append("&end=");
+        buffer.append(format.format(cal.getTime()));
+        int length = buffer.length();
+
+        for (Map<String, String> station : stations)
         {
-            URL restUrl = new URL(urlString);
-            SAXParser parser = factory.newSAXParser();
-            in = restUrl.openStream();
-            parser.parse(in, handler);
-        }
-        catch (Exception e)
-        {
-            Logger.getLogger(getClass().getName()).log(Level.WARNING, "Problem getting \"" + urlString + "\"", e);
-            throw e;
-        }
-        finally
-        {
-            if (in != null)
+            // build the NDFD URL
+            buffer.setLength(length);
+            buffer.append("&lat=");
+            buffer.append(station.get("lat"));
+            buffer.append("&lon=");
+            buffer.append(station.get("lon"));
+            String urlString = buffer.toString();
+            try
             {
-                in.close();
+                result.add(new URL(urlString));
+            }
+            catch (Exception e)
+            {
+                Logger.getLogger(getClass().getName()).log(Level.WARNING, "Problem parsing \"" + urlString + "\"", e);
             }
         }
-        return handler.getMap();
+        return result;
+    }
+
+    @Override
+    protected DefaultHandler getXMLHandler(Map<String, String> props)
+    {
+        return new XmlHandler(props);
+    }
+
+    public boolean isValid(Map<String, String> props)
+    {
+        String text = props.get("creation-date");
+Logger.getLogger(getClass().getName()).log(Level.INFO, "creation-date: " + text);
+        long timestamp = parseDate(format, text);
+        return (timestamp > cutoff);
     }
 }

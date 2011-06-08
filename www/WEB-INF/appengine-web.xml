@@ -6,6 +6,7 @@
 
     <static-files>
         <include path="/favicon.ico" expiration="7d" />
+        <include path="/robots.txt" expiration="7d" />
         <include path="/css/**" expiration="1d" />
         <include path="/images/**" expiration="7d" />
         <include path="/js/**" expiration="1d" />

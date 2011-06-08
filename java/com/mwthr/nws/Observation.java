@@ -16,19 +16,23 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with mwthr.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.mwthr.web;
+package com.mwthr.nws;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringReader;
 import java.net.URL;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Locale;
 import java.util.Map;
-import java.util.concurrent.Callable;
+import java.util.TimeZone;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.xml.parsers.SAXParser;
-import javax.xml.parsers.SAXParserFactory;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -38,17 +42,23 @@ import org.xml.sax.helpers.DefaultHandler;
  * This class fetches XML data from a URL and returns it as a
  * {@link java.util.Map java.util.Map}.
  */
-public class RestXmlCallable
-    implements Callable<Map<String, String>>
+public class Observation
+    extends WeatherDataHandler
 {
     /**
      * SAX parser data handler that populates the map.
      */
-    private class XmlHandler extends DefaultHandler
+    private static class XmlHandler extends DefaultHandler
     {
+        final Map<String, String> result;
         final StringBuilder buffer = new StringBuilder();
         boolean hasStartElement = false;
         boolean hasEndElement = false;
+
+        XmlHandler(Map<String, String> result)
+        {
+            this.result = result;
+        }
 
         @Override
         public void characters(char[] ch, int start, int length)
@@ -61,7 +71,7 @@ public class RestXmlCallable
         public void endElement(String uri, String localName, String qName)
             throws SAXException
         {
-            if (elementName.equals(qName))
+            if (ELEMENT_NAME.equals(qName))
             {
                 hasEndElement = true;
             }
@@ -87,7 +97,7 @@ public class RestXmlCallable
         public void startElement(String uri, String localName, String qName, Attributes attributes)
             throws SAXException
         {
-            if (elementName.equals(qName))
+            if (ELEMENT_NAME.equals(qName))
             {
                 hasStartElement = true;
             }
@@ -96,75 +106,65 @@ public class RestXmlCallable
     }
 
     /**
-     * SAX parser factory.
+     * 90 minutes.
      */
-    private static final SAXParserFactory factory;
-
-    /**
-     * The URL from which to retrieve the XML.
-     */
-    private final String urlString;
+    private static final long CACHE_LIFE = 5400000L;
 
     /**
      * The name of the element from which to extract values.
      */
-    private final String elementName;
+    private static final String ELEMENT_NAME = "current_observation";
 
-    /**
-     * The map where the extracted data is stored.
-     */
-    private final Map<String, String> result = new LinkedHashMap<String, String>();
+    private final DateFormat format;
 
-    static
-    {
-        factory = SAXParserFactory.newInstance();
-        factory.setValidating(false);
-    }
+    private final List<Map<String, String>> stations;
+
+    private final long cutoff;
 
     /**
      * Constructor.
-     * @param urlString the URL from which to retrieve the XML
-     * @param elementName the name of the element from which to extract values
+     * @param stations observation station properties maps
      */
-    public RestXmlCallable(String urlString, String elementName)
+    public Observation(List<Map<String, String>> stations)
     {
-        this.urlString = urlString;
-        this.elementName = elementName;
+        this.stations = stations;
+
+        // get max timestamp for a valid cache entry
+        cutoff = System.currentTimeMillis() - CACHE_LIFE;
+
+        // format for parsing observation timestamp
+        format = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss Z", Locale.US);
+        format.setTimeZone(TimeZone.getTimeZone("GMT"));
     }
 
-    /**
-     * Returns the map of data extracted. The first instance of an element
-     * with the name passed to the constructor is used. The simple child
-     * elements of that element become entries in the map, with the element
-     * name as the key and its content as the value. If the extracted element
-     * contains mixed content children, or multiple child elements with the same
-     * name, the result is undefined.
-     */
-    @Override
-    public Map<String, String> call()
-        throws Exception
+    public List<URL> getURLs()
     {
-        InputStream in = null;
-        try
+        List<URL> result = new ArrayList<URL>();
+        for (Map<String, String> station : stations)
         {
-            URL restUrl = new URL(urlString);
-            SAXParser parser = factory.newSAXParser();
-            DefaultHandler handler = new XmlHandler();
-            in = restUrl.openStream();
-            parser.parse(in, handler);
-        }
-        catch (Exception e)
-        {
-            Logger.getLogger(getClass().getName()).log(Level.WARNING, "Problem getting \"" + urlString + "\"", e);
-            throw e;
-        }
-        finally
-        {
-            if (in != null)
+            try
             {
-                in.close();
+                result.add(new URL(station.get("xml_url_www")));
+            }
+            catch (Exception e)
+            {
+                Logger.getLogger(getClass().getName()).log(Level.WARNING, "Problem parsing \"" + station.get("xml_url_www") + "\"", e);
             }
         }
         return result;
+    }
+
+    @Override
+    protected DefaultHandler getXMLHandler(Map<String, String> props)
+    {
+        return new XmlHandler(props);
+    }
+
+    public boolean isValid(Map<String, String> props)
+    {
+        String text = props.get("observation_time_rfc822");
+Logger.getLogger(getClass().getName()).log(Level.INFO, "observation_time_rfc822: " + text);
+        long timestamp = parseDate(format, text);
+        return (timestamp > cutoff);
     }
 }

@@ -108,6 +108,7 @@ class Nexrad extends LocatorImpl
                     if (icao != null && icao.length() > 0)
                     {
                         props.put("baseurl", "http://radar.weather.gov/ridge/lite/N0R/" + icao.substring(1) + "_");
+                        props.put("statusurl", "http://weather.noaa.gov/monitor/radar2/site/" + icao.toLowerCase() + ".html");
                     }
                     break;
                 case 2:

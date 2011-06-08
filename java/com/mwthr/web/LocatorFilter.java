@@ -32,7 +32,10 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.mwthr.gae.URLDataFetcher;
+import com.mwthr.nws.Forecast;
 import com.mwthr.nws.Locator;
+import com.mwthr.nws.Observation;
 
 /**
  * This filter functions as the controller for the application. It determines
@@ -51,6 +54,8 @@ public class LocatorFilter implements Filter
      * {@link com.mwthr.web.LocatorFilter#init}.
      */
     private FilterConfig config = null;
+
+    private URLDataFetcher fetcher = null;
 
     /**
      * No argument constructor.
@@ -79,7 +84,6 @@ public class LocatorFilter implements Filter
 
         PathMatcher path = new PathMatcher(request.getRequestURI());
         List<Map<String, String>> stations = null;
-        Map<String, String> station = null;
         Map<String, String> cwa = null;
         Map<String, String> radar = null;
         boolean showPicker = false;
@@ -88,13 +92,11 @@ public class LocatorFilter implements Filter
         {
             double[] where = getCoordinates(request);
             stations = Locator.STATION.nearest(where, STATION_COUNT);
-            station = stations.isEmpty() ? null : stations.get(0);
-            showPicker = (station == null);
+            showPicker = stations.isEmpty();
             if (showPicker)
             {
                 where = GeoIP.getCoordinates(config.getServletContext(), request);
                 stations = Locator.STATION.nearest(where, STATION_COUNT);
-                station = stations.isEmpty() ? null : stations.get(0);
             }
             cwa = Locator.CWA.nearest(where);
             radar = Locator.NEXRAD.nearest(where);
@@ -103,9 +105,8 @@ public class LocatorFilter implements Filter
         {
             radar = Locator.NEXRAD.get(path.group(1).toUpperCase());
             stations = Locator.STATION.nearest(radar, STATION_COUNT);
-            station = stations.isEmpty() ? null : stations.get(0);
             cwa = Locator.CWA.nearest(radar);
-            if (station == null || cwa == null)
+            if (stations.isEmpty() || cwa == null)
             {
                 response.sendError(404);
                 return;
@@ -115,9 +116,8 @@ public class LocatorFilter implements Filter
         {
             cwa = Locator.CWA.get(path.group(1).toUpperCase());
             stations = Locator.STATION.nearest(cwa, STATION_COUNT);
-            station = stations.isEmpty() ? null : stations.get(0);
             radar = Locator.NEXRAD.nearest(cwa);
-            if (station == null || radar == null)
+            if (stations.isEmpty() || radar == null)
             {
                 response.sendError(404);
                 return;
@@ -125,7 +125,7 @@ public class LocatorFilter implements Filter
         }
         else if (path.matches("^/+station/+([a-z]{4})$"))
         {
-            station = Locator.STATION.get(path.group(1).toUpperCase());
+            Map<String, String> station = Locator.STATION.get(path.group(1).toUpperCase());
             radar = Locator.NEXRAD.nearest(station);
             cwa = Locator.CWA.nearest(station);
             if (radar == null || cwa == null)
@@ -151,11 +151,10 @@ public class LocatorFilter implements Filter
         }
 
         request.setAttribute("stations", stations);
-        request.setAttribute("station", station);
         request.setAttribute("cwa", cwa);
         request.setAttribute("radar", radar);
         RequestDispatcher dispatcher = null;
-        if (cwa == null || radar == null || stations == null || station == null)
+        if (stations == null || stations.isEmpty() || cwa == null || radar == null)
         {
             dispatcher = request.getRequestDispatcher("/national.jsp");
         }
@@ -165,6 +164,10 @@ public class LocatorFilter implements Filter
         }
         else
         {
+            URLDataFetcher.Result current = fetcher.getResult(new Observation(stations));
+            URLDataFetcher.Result forecast = fetcher.getResult(new Forecast(stations));
+            request.setAttribute("current", current.getData());
+            request.setAttribute("forecast", forecast.getData());
             dispatcher = request.getRequestDispatcher("/weather.jsp");
         }
         dispatcher.forward(request, response);
@@ -206,5 +209,6 @@ public class LocatorFilter implements Filter
         throws ServletException
     {
         this.config = config;
+        fetcher = new URLDataFetcher();
     }
 }

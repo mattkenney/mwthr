@@ -159,3 +159,4 @@ NCDCID   ICAO WBAN  NAME                           COUNTRY              ST COUNT
 30001969 RODN 42219 KADENA                         JAPAN                                                  26.30194  127.90972  218           NEXRAD                                           
 30001966 TJUA 11655 SAN JUAN                       UNITED STATES        PR SAN JUAN                       18.1175   -66.07861  2794   +4     NEXRAD                                           
 30001961      41417 ANDERSEN AFB AGANA             GUAM                 GU GUAM                           13.45444  144.80833  264    +8     NEXRAD                                           
+         KRTX       PORTLAND                                                                              45.71503  -122.96505
