@@ -52,9 +52,10 @@ if (navigator.geolocation)
     navigator.geolocation.getCurrentPosition(
         function (pos)
         {
-            document.forms.location.elements.lat.value = pos.coords.latitude;
-            document.forms.location.elements.lon.value = pos.coords.longitude;
-            document.forms.location.submit();
+            document.cookie = 'lat=' + pos.coords.latitude;
+            document.cookie = 'lon=' + pos.coords.longitude;
+            document.cookie = 'utc=' + new Date().getTime();
+            location = location;
         },
         null,
         {

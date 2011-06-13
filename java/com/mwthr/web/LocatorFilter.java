@@ -20,6 +20,7 @@ package com.mwthr.web;
 
 import java.io.IOException;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javax.servlet.Filter;
@@ -29,6 +30,7 @@ import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -188,6 +190,20 @@ public class LocatorFilter implements Filter
         dispatcher.forward(request, response);
     }
 
+    String getCookie(HttpServletRequest request, String name)
+    {
+        String result = null;
+        Cookie[] cookies = request.getCookies();
+        for (int i = 0; cookies != null && i < cookies.length; i++)
+        {
+            if (cookies[i].getName().equals(name))
+            {
+                result = cookies[i].getValue();
+            }
+        }
+        return result;
+    }
+
     /**
      * Returns the latitude/longitude from request parameters, or null
      * if not present or not valid.
@@ -195,15 +211,17 @@ public class LocatorFilter implements Filter
     double[] getCoordinates(HttpServletRequest request)
     {
         double[] result = null;
-        String lat = request.getParameter("lat");
-        String lon = request.getParameter("lon");
-        if (lat != null && lon != null)
+        String lat = getCookie(request, "lat");
+        String lon = getCookie(request, "lon");
+        String utc = getCookie(request, "utc");
+        if (lat != null && lon != null && utc != null)
         {
             try
             {
-                double latitude = Double.valueOf(lat);
-                double longitude = Double.valueOf(lon);
-                if (-90.0 <= latitude && latitude <= 90.0 && -180.0 <= longitude && longitude <= 180.0)
+                double latitude = Double.parseDouble(lat);
+                double longitude = Double.parseDouble(lon);
+                long timestamp = Long.parseLong(utc);
+                if (-90.0 <= latitude && latitude <= 90.0 && -180.0 <= longitude && longitude <= 180.0 && (System.currentTimeMillis() - timestamp) < 1800000L)
                 {
                     result = new double[] { latitude, longitude };
                 }
