@@ -34,6 +34,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.mwthr.gae.URLDataFetcher;
 import com.mwthr.nws.Forecast;
+import com.mwthr.nws.Graph;
 import com.mwthr.nws.Locator;
 import com.mwthr.nws.Observation;
 
@@ -86,10 +87,12 @@ public class LocatorFilter implements Filter
         List<Map<String, String>> stations = null;
         Map<String, String> cwa = null;
         Map<String, String> radar = null;
+        String duration = null;
         boolean showPicker = false;
 
-        if (path.matches("^/+$"))
+        if (path.matches("^/+(24|72|120|168)?$"))
         {
+            duration = path.group(1);
             double[] where = getCoordinates(request);
             stations = Locator.STATION.nearest(where, STATION_COUNT);
             showPicker = stations.isEmpty();
@@ -101,8 +104,9 @@ public class LocatorFilter implements Filter
             cwa = Locator.CWA.nearest(where);
             radar = Locator.NEXRAD.nearest(where);
         }
-        else if (path.matches("^/+icao/+([a-z]{4})$"))
+        else if (path.matches("^/+icao/+([a-z]{4})/(24|72|120|168)?$"))
         {
+            duration = path.group(2);
             radar = Locator.NEXRAD.get(path.group(1).toUpperCase());
             stations = Locator.STATION.nearest(radar, STATION_COUNT);
             cwa = Locator.CWA.nearest(radar);
@@ -112,8 +116,9 @@ public class LocatorFilter implements Filter
                 return;
             }
         }
-        else if (path.matches("^/+cwa/+([0-9]{3})$"))
+        else if (path.matches("^/+cwa/+([0-9]{3})/(24|72|120|168)?$"))
         {
+            duration = path.group(2);
             cwa = Locator.CWA.get(path.group(1).toUpperCase());
             stations = Locator.STATION.nearest(cwa, STATION_COUNT);
             radar = Locator.NEXRAD.nearest(cwa);
@@ -123,8 +128,9 @@ public class LocatorFilter implements Filter
                 return;
             }
         }
-        else if (path.matches("^/+station/+([a-z]{4})$"))
+        else if (path.matches("^/+station/+([a-z]{4})/(24|72|120|168)?$"))
         {
+            duration = path.group(2);
             Map<String, String> station = Locator.STATION.get(path.group(1).toUpperCase());
             radar = Locator.NEXRAD.nearest(station);
             cwa = Locator.CWA.nearest(station);
@@ -139,7 +145,7 @@ public class LocatorFilter implements Filter
         {
             // just forward to "/national.jsp"
         }
-        else if (path.matches("^/+((cwa)|(icao)|(station))$"))
+        else if (path.matches("^/+((cwa)|(icao)|(station))(/[0-9a-z]{3,4})?$"))
         {
             response.sendRedirect(request.getRequestURI() + "/");
             return;
@@ -161,6 +167,15 @@ public class LocatorFilter implements Filter
         else if (showPicker)
         {
             dispatcher = request.getRequestDispatcher("/index.jsp");
+        }
+        else if (duration != null)
+        {
+            URLDataFetcher.Result current = fetcher.getResult(new Observation(stations));
+            URLDataFetcher.Result graph = fetcher.getResult(new Graph(stations));
+            request.setAttribute("current", current.getData());
+            request.setAttribute("graphurl", graph.getData().get("graph" + duration));
+            request.setAttribute("duration", duration);
+            dispatcher = request.getRequestDispatcher("/graph.jsp");
         }
         else
         {

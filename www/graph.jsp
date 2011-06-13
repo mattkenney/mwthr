@@ -35,24 +35,26 @@
 <div>
 <table class="summary">
 <tbody>
-<tr><td class="label">County/Area:</td><td colspan="2"><c:out value="${cwa.name}, ${cwa.state}" /></td></tr>
-<tr><td class="label">Now:</td><td colspan="2"><c:if test="${empty current.temp_f}">?</c:if><c:out value="${current.temp_f}" /> &#176;F<c:if test="${!empty current.weather}">, <c:out value="${current.weather}" /></c:if></td></tr>
-<tr><td class="label">Next 24 hours:</td><td colspan="2"><a href="24"><c:if test="${empty forecast.temperature}">?</c:if><c:out value="${forecast.temperature}" /> &#176;F<c:if test="${!empty forecast['probability-of-precipitation']}">, <c:out value="${forecast['probability-of-precipitation']}" />% chance of precipitation</c:if></a></td></tr>
-<tr><td class="label">Radar:</td><td><c:out value="${radar.name}" /></td><td class="option"><a href="<c:out value="${radar.statusurl}" />" target="_blank">radar status</a> | <a href="/icao/">change location</a></td></tr>
+<tr><td class="label">County/Area:</td><td><c:out value="${cwa.name}, ${cwa.state}" /></td></tr>
+<tr><td class="label">Now:</td><td><c:if test="${empty current.temp_f}">?</c:if><c:out value="${current.temp_f}" /> &#176;F<c:if test="${!empty current.weather}">, <c:out value="${current.weather}" /></c:if></td></tr>
+<tr><td class="label">Radar:</td><td><a href="."><c:out value="${radar.name}" /></td></tr>
+<tr><td class="label">Forecast:</td><td>
+<a<c:if test="${duration!='24'}"> href="24"</c:if>>24h</a>
+|
+<a<c:if test="${duration!='72'}"> href="72"</c:if>>72h</a>
+|
+<a<c:if test="${duration!='120'}"> href="120"</c:if>>120h</a>
+|
+<a<c:if test="${duration!='168'}"> href="168"</c:if>>168h</a>
+</td></tr>
 </tbody>
 </table>
-<noscript><img alt="radar" height="550" src="<c:out value="${radar.baseurl}" />Loop.gif" width="600" /></noscript>
-<input id="jsloop" name="jsloop" type="hidden" value="<c:out value="${radar.baseurl}" />" />
+<img alt="forecast" height="220" src="<c:out value="${graphurl}" />" width="600" />
 <table class="subtle">
 <tbody>
 <tr><td>Like? Don't like? Let me know: matt<img alt="" src="/images/at.png" />mwthr.com</td></tr>
 </tbody>
 </table>
 </div>
-<script type="text/javascript">
-/* <![CDATA[ */
-<% pageContext.include("/js/radarloop.js"); %>
-/* ]]> */
-</script>
 </body>
 </html>

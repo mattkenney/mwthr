@@ -183,6 +183,7 @@ public class Forecast
         format.setTimeZone(TimeZone.getTimeZone("GMT"));
     }
 
+    @Override
     public List<URL> getURLs()
     {
         List<URL> result = new ArrayList<URL>();
@@ -230,6 +231,7 @@ public class Forecast
         return new XmlHandler(props);
     }
 
+    @Override
     public boolean isValid(Map<String, String> props)
     {
         String text = props.get("creation-date");

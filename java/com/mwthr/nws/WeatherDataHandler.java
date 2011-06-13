@@ -65,7 +65,7 @@ public abstract class WeatherDataHandler
      * @param text the date string
      * @return the date
      */
-    protected long parseDate(DateFormat format, String text)
+    static long parseDate(DateFormat format, String text)
     {
         long result = 0L;
         if (text != null)
