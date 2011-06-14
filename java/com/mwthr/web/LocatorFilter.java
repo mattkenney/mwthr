@@ -170,19 +170,16 @@ public class LocatorFilter implements Filter
         {
             dispatcher = request.getRequestDispatcher("/index.jsp");
         }
-        else if (duration != null)
-        {
-            URLDataFetcher.Result current = fetcher.getResult(new Observation(stations));
-            URLDataFetcher.Result graph = fetcher.getResult(new Graph(stations));
-            request.setAttribute("current", current.getData());
-            request.setAttribute("graphurl", graph.getData().get("graph" + duration));
-            request.setAttribute("duration", duration);
-            dispatcher = request.getRequestDispatcher("/graph.jsp");
-        }
         else
         {
             URLDataFetcher.Result current = fetcher.getResult(new Observation(stations));
             URLDataFetcher.Result forecast = fetcher.getResult(new Forecast(stations));
+            if (duration != null)
+            {
+                URLDataFetcher.Result graph = fetcher.getResult(new Graph(stations));
+                request.setAttribute("graph", graph.getData());
+                request.setAttribute("duration", duration);
+            }
             request.setAttribute("current", current.getData());
             request.setAttribute("forecast", forecast.getData());
             dispatcher = request.getRequestDispatcher("/weather.jsp");

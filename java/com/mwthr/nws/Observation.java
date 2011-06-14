@@ -165,8 +165,8 @@ public class Observation
     public boolean isValid(Map<String, String> props)
     {
         String text = props.get("observation_time_rfc822");
-Logger.getLogger(getClass().getName()).log(Level.INFO, "observation_time_rfc822: " + text);
         long timestamp = parseDate(format, text);
+Logger.getLogger(getClass().getName()).log(Level.INFO, "observation_time_rfc822: " + text + " -> " + (timestamp > cutoff));
         return (timestamp > cutoff);
     }
 }

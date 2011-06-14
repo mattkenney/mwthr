@@ -235,8 +235,8 @@ public class Forecast
     public boolean isValid(Map<String, String> props)
     {
         String text = props.get("creation-date");
-Logger.getLogger(getClass().getName()).log(Level.INFO, "creation-date: " + text);
         long timestamp = parseDate(format, text);
+Logger.getLogger(getClass().getName()).log(Level.INFO, "creation-date: " + text + " -> " + (timestamp > cutoff));
         return (timestamp > cutoff);
     }
 }

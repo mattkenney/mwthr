@@ -33,26 +33,57 @@
 </head>
 <body>
 <div>
-<table class="summary">
+<table class="summary summary-top">
 <tbody>
 <tr><td class="label">County/Area:</td><td colspan="2"><c:out value="${cwa.name}, ${cwa.state}" /></td></tr>
 <tr><td class="label">Now:</td><td colspan="2"><c:if test="${empty current.temp_f}">?</c:if><c:out value="${current.temp_f}" /> &#176;F<c:if test="${!empty current.weather}">, <c:out value="${current.weather}" /></c:if></td></tr>
-<tr><td class="label">Next 24 hours:</td><td colspan="2"><a href="24"><c:if test="${empty forecast.temperature}">?</c:if><c:out value="${forecast.temperature}" /> &#176;F<c:if test="${!empty forecast['probability-of-precipitation']}">, <c:out value="${forecast['probability-of-precipitation']}" />% chance of precipitation</c:if></a></td></tr>
+<tr><td class="label">Next 24 hours:</td><td colspan="2"><c:if test="${empty forecast.temperature}">?</c:if><c:out value="${forecast.temperature}" /> &#176;F<c:if test="${!empty forecast['probability-of-precipitation']}">, <c:out value="${forecast['probability-of-precipitation']}" />% chance of precipitation</c:if></td></tr>
 <tr><td class="label">Radar:</td><td><c:out value="${radar.name}" /></td><td class="option"><a href="<c:out value="${radar.statusurl}" />" target="_blank">radar status</a> | <a href="/icao/">change location</a></td></tr>
+</tbody>
+</table>
+<table cellpadding="0" cellspacing="0" class="summary summary-middle">
+<tbody>
+<tr>
+<c:choose>
+<c:when test="${duration==24}">
+<td width="33%"><div class="tab"><a href="." class="tab-a">Radar</a></div></td>
+<td width="33%"><div class="tab tab-active">Next 24 Hours</div></td>
+<td width="33%"><div class="tab"><a href="120" class="tab-a">Next 5 days</a></div></td>
+</tr>
+</tbody>
+</table>
+<img alt="forecast" class="forecast" height="220" src="<c:out value="${graph.graph24}" />" width="596" />
+</c:when>
+<c:when test="${duration==120}">
+<td width="33%"><div class="tab"><a href="." class="tab-a">Radar</a></div></td>
+<td width="33%"><div class="tab"><a href="24" class="tab-a">Next 24 Hours</a></div></td>
+<td width="33%"><div class="tab tab-active">Next 5 days</div></td>
+</tr>
+</tbody>
+</table>
+<img alt="forecast" class="forecast" height="220" src="<c:out value="${graph.graph120}" />" width="596" />
+</c:when>
+<c:otherwise>
+<td width="33%"><div class="tab tab-active">Radar</div></td>
+<td width="33%"><div class="tab"><a href="24" class="tab-a">Next 24 Hours</a></div></td>
+<td width="33%"><div class="tab"><a href="120" class="tab-a">Next 5 days</a></div></td>
+</tr>
 </tbody>
 </table>
 <noscript><img alt="radar" height="550" src="<c:out value="${radar.baseurl}" />Loop.gif" width="600" /></noscript>
 <input id="jsloop" name="jsloop" type="hidden" value="<c:out value="${radar.baseurl}" />" />
+<script type="text/javascript">
+/* <![CDATA[ */
+<% pageContext.include("/js/radarloop.js"); %>
+/* ]]> */
+</script>
+</c:otherwise>
+</c:choose>
 <table class="subtle">
 <tbody>
 <tr><td>Like? Don't like? Let me know: matt<img alt="" src="/images/at.png" />mwthr.com</td></tr>
 </tbody>
 </table>
 </div>
-<script type="text/javascript">
-/* <![CDATA[ */
-<% pageContext.include("/js/radarloop.js"); %>
-/* ]]> */
-</script>
 </body>
 </html>

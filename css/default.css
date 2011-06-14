@@ -14,6 +14,11 @@ img
     border:0;
 }
 
+.forecast
+{
+    border:2px solid #000;
+}
+
 .label
 {
     vertical-align:top;
@@ -39,6 +44,40 @@ img
     background-color:white;
     border:1px solid #666;
     width:600px;
+}
+
+.summary-middle
+{
+    border-bottom:none;
+    border-top:none;
+}
+
+.summary-top
+{
+    border-bottom:none;
+}
+
+.tab
+{
+    border-left:1px solid #666;
+    border-right:1px solid #666;
+    border-top:1px solid #666;
+    color:#666;
+    margin:3px 3px 0px 3px;
+    padding:3px;
+    text-align:center;
+}
+
+.tab-a
+{
+    color:#666;
+    text-decoration:none;
+}
+
+.tab-active
+{
+    background-color:#737373;
+    color:#fff;
 }
 
 .updating

@@ -60,6 +60,7 @@ public class URLDataFetcher
             for (URL dataURL : handler.getURLs())
             {
                 Map<String, String> props = cache.get(dataURL);
+Logger.getLogger(getClass().getName()).log(Level.INFO, "cache: " + dataURL + " -> " + (props != null));
 
                 if (props == null || !handler.isValid(props))
                 {
@@ -112,6 +113,7 @@ public class URLDataFetcher
                         Map<String, String> props = (data == null) ? null : handler.parse(entry.getKey(), data);
                         if (props != null && handler.isValid(props))
                         {
+Logger.getLogger(getClass().getName()).log(Level.INFO, "caching: " + entry.getKey());
                             cache.put(entry.getKey(), props);
                             value = props;
                             break;
@@ -153,18 +155,19 @@ public class URLDataFetcher
     @SuppressWarnings("unchecked")
     public URLDataFetcher()
     {
-        Map props = new HashMap();
-        props.put(GCacheFactory.EXPIRATION_DELTA, EXPIRATION_DELTA);
-        try
-        {
-            CacheManager manager = CacheManager.getInstance();
-            CacheFactory cacheFactory = manager.getCacheFactory();
-            cache = cacheFactory.createCache(props);
-        }
-        catch (Exception e)
-        {
-            Logger.getLogger(getClass().getName()).log(Level.SEVERE, "Unable to create cache", e);
-        }
+//        Map props = new HashMap();
+//        props.put(GCacheFactory.EXPIRATION_DELTA, EXPIRATION_DELTA);
+//        try
+//        {
+//            CacheManager manager = CacheManager.getInstance();
+//            CacheFactory cacheFactory = manager.getCacheFactory();
+//            cache = cacheFactory.createCache(props);
+//        }
+//        catch (Exception e)
+//        {
+//            Logger.getLogger(getClass().getName()).log(Level.SEVERE, "Unable to create cache", e);
+//        }
+        cache = new HashMap();
     }
 
     public Result getResult(URLDataHandler handler)
