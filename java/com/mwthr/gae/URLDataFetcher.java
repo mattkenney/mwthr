@@ -155,19 +155,18 @@ Logger.getLogger(getClass().getName()).log(Level.INFO, "caching: " + entry.getKe
     @SuppressWarnings("unchecked")
     public URLDataFetcher()
     {
-//        Map props = new HashMap();
-//        props.put(GCacheFactory.EXPIRATION_DELTA, EXPIRATION_DELTA);
-//        try
-//        {
-//            CacheManager manager = CacheManager.getInstance();
-//            CacheFactory cacheFactory = manager.getCacheFactory();
-//            cache = cacheFactory.createCache(props);
-//        }
-//        catch (Exception e)
-//        {
-//            Logger.getLogger(getClass().getName()).log(Level.SEVERE, "Unable to create cache", e);
-//        }
-        cache = new HashMap();
+        Map props = new HashMap();
+        props.put(GCacheFactory.EXPIRATION_DELTA, EXPIRATION_DELTA);
+        try
+        {
+            CacheManager manager = CacheManager.getInstance();
+            CacheFactory cacheFactory = manager.getCacheFactory();
+            cache = cacheFactory.createCache(props);
+        }
+        catch (Exception e)
+        {
+            Logger.getLogger(getClass().getName()).log(Level.SEVERE, "Unable to create cache", e);
+        }
     }
 
     public Result getResult(URLDataHandler handler)
