@@ -33,12 +33,14 @@
 </head>
 <body>
 <div>
-<table class="summary">
+<table class="summary summary-top">
 <tbody>
-<tr><td>Click map to choose location:</td></tr>
+<tr><td>Click map to choose location:</td><td class="option"><a href="/">my location</a></td></tr>
 </tbody>
 </table>
+<div class="summary summary-image">
 <img alt="radar" height="282" src="http://radar.weather.gov/Conus/RadarImg/latest_Small.gif" width="600" usemap="#radarmap" />
+</div>
 <map name="radarmap">
 <area shape="poly" coords="77,0,73,25,65,36,7,26,12,0,77,0,77,0" href="/icao/katx/" alt="Go to the Seattle/Tacoma, WA Doppler radar">
 <area shape="poly" coords="121,0,113,44,108,46,74,26,77,0,118,0,121,0,121,0" href="/icao/kotx/" alt="Go to the Spokane, WA Doppler radar">

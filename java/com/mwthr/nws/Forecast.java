@@ -188,12 +188,10 @@ public class Forecast
     {
         List<URL> result = new ArrayList<URL>();
 
-        // UTC end time 28 hours in the future
-        // since forecast periods can be three hours and we cache for one hour
-        // we add four hours to capture all possible extremes
+        // UTC end time 24 hours in the future
         Calendar cal = format.getCalendar();
         cal.setTimeInMillis(System.currentTimeMillis());
-        cal.add(Calendar.HOUR_OF_DAY, 28);
+        cal.add(Calendar.HOUR_OF_DAY, 24);
         cal.set(Calendar.MINUTE, 0);
         cal.set(Calendar.SECOND, 0);
         cal.set(Calendar.MILLISECOND, 0);

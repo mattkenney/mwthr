@@ -34,7 +34,7 @@ img
 
 .subtle
 {
-    color:#666;
+    color:#737373;
     font-size:75%;
     width:600px;
 }
@@ -44,6 +44,18 @@ img
     background-color:white;
     border:2px solid #000;
     width:600px;
+}
+
+.summary-image
+{
+    height:282px;
+    overflow:hidden;
+    width:596px;
+}
+
+.summary-image > img
+{
+    margin-left:-4px;
 }
 
 .summary-middle
@@ -59,10 +71,10 @@ img
 
 .tab
 {
-    border-left:1px solid #666;
-    border-right:1px solid #666;
-    border-top:1px solid #666;
-    color:#666;
+    border-left:1px solid #737373;
+    border-right:1px solid #737373;
+    border-top:1px solid #737373;
+    color:#737373;
     margin:3px 3px 0px 3px;
     padding:3px;
     text-align:center;
@@ -70,7 +82,7 @@ img
 
 .tab-a
 {
-    color:#666;
+    color:#737373;
     text-decoration:none;
 }
 
