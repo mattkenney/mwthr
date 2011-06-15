@@ -46,14 +46,14 @@ img
     width:600px;
 }
 
-.summary-image
+.summary-oversize
 {
     height:282px;
     overflow:hidden;
     width:596px;
 }
 
-.summary-image > img
+.summary-image
 {
     margin-left:-4px;
 }
