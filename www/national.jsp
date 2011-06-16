@@ -32,7 +32,7 @@
 <title>mwthr.com</title>
 </head>
 <body>
-<div>
+<div class="overall">
 <table class="summary summary-top">
 <tbody>
 <tr><td>Click map to choose location:</td><td class="option"><a href="/">my location</a></td></tr>

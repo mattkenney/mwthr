@@ -9,6 +9,11 @@ body
     background-color:#ccc;
 }
 
+html
+{
+    overflow-y:scroll;
+}
+
 img
 {
     border:0;
@@ -30,6 +35,13 @@ img
 .option
 {
     text-align:right;
+}
+
+.overall
+{
+    margin-left:auto;
+    margin-right:auto;
+    width:600px;
 }
 
 .subtle

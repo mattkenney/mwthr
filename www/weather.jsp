@@ -32,7 +32,7 @@
 <title>mwthr.com</title>
 </head>
 <body>
-<div>
+<div class="overall">
 <table class="summary summary-top">
 <tbody>
 <tr><td class="label">County/Area:</td><td colspan="2"><c:out value="${cwa.name}, ${cwa.state}" /></td></tr>

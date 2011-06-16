@@ -33,7 +33,7 @@
 <title>mwthr.com</title>
 </head>
 <body>
-<div>
+<div class="overall">
 <noscript>
 <table class="summary updating">
 <tbody>
