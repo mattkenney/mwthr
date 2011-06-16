@@ -38,8 +38,8 @@
 <tr><td>Click map to choose location:</td><td class="option"><a href="/">my location</a></td></tr>
 </tbody>
 </table>
-<div class="summary summary-oversize">
-<img alt="radar" class="summary-national" height="282" src="http://radar.weather.gov/Conus/RadarImg/latest_Small.gif" width="600" usemap="#radarmap" />
+<div class="summary summary-national">
+<img alt="USA radar mosaic" class="summary-national-image" height="282" src="http://radar.weather.gov/Conus/RadarImg/latest_Small.gif" width="600" usemap="#radarmap" />
 </div>
 <map name="radarmap">
 <area shape="poly" coords="77,0,73,25,65,36,7,26,12,0,77,0,77,0" href="/icao/katx/" alt="Go to the Seattle/Tacoma, WA Doppler radar">

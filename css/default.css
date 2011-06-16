@@ -48,20 +48,26 @@ img
 
 .summary-national
 {
+    height:282px;
+    overflow:hidden;
+    width:596px;
+}
+
+.summary-national-image
+{
     margin-left:-4px;
 }
 
 .summary-ocean
 {
-    margin-left:15px;
+    background-color:black;
+    height:353px;
+    width:596px;
 }
 
-.summary-oversize
+.summary-ocean-image
 {
-    background-color:black;
-    height:282px;
-    overflow:hidden;
-    width:596px;
+    margin-left:15px;
 }
 
 .summary-middle

@@ -76,8 +76,8 @@
 </tr>
 </tbody>
 </table>
-<div class="summary summary-oversize">
-<img alt="radar" class="summary-ocean" height="353" src="http://www.nhc.noaa.gov/overview_atl/atl_overview.gif" width="565" />
+<div class="summary summary-ocean">
+<img alt="radar" class="summary-ocean-image" height="353" src="http://www.nhc.noaa.gov/overview_atl/atl_overview.gif" width="565" />
 </div>
 </c:when>
 <c:when test="${ocean=='pac'}">
@@ -89,8 +89,8 @@
 </tr>
 </tbody>
 </table>
-<div class="summary summary-oversize">
-<img alt="radar" class="summary-ocean" height="353" src="http://www.nhc.noaa.gov/overview_epac/epac_overview.gif" width="565" />
+<div class="summary summary-ocean">
+<img alt="radar" class="summary-ocean-image" height="353" src="http://www.nhc.noaa.gov/overview_epac/epac_overview.gif" width="565" />
 </div>
 </c:when>
 <c:otherwise>
