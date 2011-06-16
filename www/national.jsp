@@ -29,7 +29,7 @@
 <style type="text/css">
 <% pageContext.include("/css/default.css"); %>
 </style>
-<title>mwthr: USA</title>
+<title>mwthr</title>
 </head>
 <body>
 <div>

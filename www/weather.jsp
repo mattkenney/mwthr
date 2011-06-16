@@ -29,7 +29,7 @@
 <style type="text/css">
 <% pageContext.include("/css/default.css"); %>
 </style>
-<title>mwthr: <c:out value="${cwa.name}" />, <c:out value="${cwa.state}" /></title>
+<title>mwthr</title>
 </head>
 <body>
 <div>
