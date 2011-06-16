@@ -46,27 +46,59 @@
 <tr>
 <c:choose>
 <c:when test="${duration==24}">
-<td width="33%"><div class="tab"><a href="." class="tab-a">Radar</a></div></td>
-<td width="33%"><div class="tab tab-active">Next 24 Hours</div></td>
-<td width="33%"><div class="tab"><a href="120" class="tab-a">Next 5 days</a></div></td>
+<td width="20%"><div class="tab"><a href="." class="tab-a">Radar</a></div></td>
+<td width="20%"><div class="tab tab-active">24 Hours</div></td>
+<td width="20%"><div class="tab"><a href="120" class="tab-a">5 Days</a></div></td>
+<td width="20%"><div class="tab"><a href="atl" class="tab-a">Atlantic</a></div></td>
+<td width="20%"><div class="tab"><a href="pac" class="tab-a">Pacific</a></div></td>
 </tr>
 </tbody>
 </table>
 <img alt="forecast" class="forecast" height="220" src="<c:out value="${graph.graph24}" />" width="596" />
 </c:when>
 <c:when test="${duration==120}">
-<td width="33%"><div class="tab"><a href="." class="tab-a">Radar</a></div></td>
-<td width="33%"><div class="tab"><a href="24" class="tab-a">Next 24 Hours</a></div></td>
-<td width="33%"><div class="tab tab-active">Next 5 days</div></td>
+<td width="20%"><div class="tab"><a href="." class="tab-a">Radar</a></div></td>
+<td width="20%"><div class="tab"><a href="24" class="tab-a">24 Hours</a></div></td>
+<td width="20%"><div class="tab tab-active">5 Days</div></td>
+<td width="20%"><div class="tab"><a href="atl" class="tab-a">Atlantic</a></div></td>
+<td width="20%"><div class="tab"><a href="pac" class="tab-a">Pacific</a></div></td>
 </tr>
 </tbody>
 </table>
 <img alt="forecast" class="forecast" height="220" src="<c:out value="${graph.graph120}" />" width="596" />
 </c:when>
+<c:when test="${ocean=='atl'}">
+<td width="20%"><div class="tab"><a href="." class="tab-a">Radar</a></div></td>
+<td width="20%"><div class="tab"><a href="24" class="tab-a">24 Hours</a></div></td>
+<td width="20%"><div class="tab"><a href="120" class="tab-a">5 Days</a></div></td>
+<td width="20%"><div class="tab tab-active">Atlantic</div></td>
+<td width="20%"><div class="tab"><a href="pac" class="tab-a">Pacific</a></div></td>
+</tr>
+</tbody>
+</table>
+<div class="summary summary-oversize">
+<img alt="radar" class="summary-ocean" height="353" src="http://www.nhc.noaa.gov/overview_atl/atl_overview.gif" width="565" />
+</div>
+</c:when>
+<c:when test="${ocean=='pac'}">
+<td width="20%"><div class="tab"><a href="." class="tab-a">Radar</a></div></td>
+<td width="20%"><div class="tab"><a href="24" class="tab-a">24 Hours</a></div></td>
+<td width="20%"><div class="tab"><a href="120" class="tab-a">5 Days</a></div></td>
+<td width="20%"><div class="tab"><a href="atl" class="tab-a">Atlantic</a></div></td>
+<td width="20%"><div class="tab tab-active">Pacific</div></td>
+</tr>
+</tbody>
+</table>
+<div class="summary summary-oversize">
+<img alt="radar" class="summary-ocean" height="353" src="http://www.nhc.noaa.gov/overview_epac/epac_overview.gif" width="565" />
+</div>
+</c:when>
 <c:otherwise>
-<td width="33%"><div class="tab tab-active">Radar</div></td>
-<td width="33%"><div class="tab"><a href="24" class="tab-a">Next 24 Hours</a></div></td>
-<td width="33%"><div class="tab"><a href="120" class="tab-a">Next 5 days</a></div></td>
+<td width="20%"><div class="tab tab-active">Radar</div></td>
+<td width="20%"><div class="tab"><a href="24" class="tab-a">24 Hours</a></div></td>
+<td width="20%"><div class="tab"><a href="120" class="tab-a">5 Days</a></div></td>
+<td width="20%"><div class="tab"><a href="atl" class="tab-a">Atlantic</a></div></td>
+<td width="20%"><div class="tab"><a href="pac" class="tab-a">Pacific</a></div></td>
 </tr>
 </tbody>
 </table>

@@ -90,11 +90,13 @@ public class LocatorFilter implements Filter
         Map<String, String> cwa = null;
         Map<String, String> radar = null;
         String duration = null;
+        String ocean = null;
         boolean showPicker = false;
 
-        if (path.matches("^/+(24|72|120|168)?$"))
+        if (path.matches("^/+((24|120)|(atl|pac))?$"))
         {
-            duration = path.group(1);
+            duration = path.group(2);
+            ocean = path.group(3);
             double[] where = getCoordinates(request);
             stations = Locator.STATION.nearest(where, STATION_COUNT);
             showPicker = stations.isEmpty();
@@ -106,9 +108,10 @@ public class LocatorFilter implements Filter
             cwa = Locator.CWA.nearest(where);
             radar = Locator.NEXRAD.nearest(where);
         }
-        else if (path.matches("^/+icao/+([a-z]{4})/(24|72|120|168)?$"))
+        else if (path.matches("^/+icao/+([a-z]{4})/((24|120)|(atl|pac))?$"))
         {
-            duration = path.group(2);
+            duration = path.group(3);
+            ocean = path.group(4);
             radar = Locator.NEXRAD.get(path.group(1).toUpperCase());
             stations = Locator.STATION.nearest(radar, STATION_COUNT);
             cwa = Locator.CWA.nearest(radar);
@@ -118,9 +121,10 @@ public class LocatorFilter implements Filter
                 return;
             }
         }
-        else if (path.matches("^/+cwa/+([0-9]{3})/(24|72|120|168)?$"))
+        else if (path.matches("^/+cwa/+([0-9]{3})/((24|120)|(atl|pac))?$"))
         {
-            duration = path.group(2);
+            duration = path.group(3);
+            ocean = path.group(4);
             cwa = Locator.CWA.get(path.group(1).toUpperCase());
             stations = Locator.STATION.nearest(cwa, STATION_COUNT);
             radar = Locator.NEXRAD.nearest(cwa);
@@ -130,9 +134,10 @@ public class LocatorFilter implements Filter
                 return;
             }
         }
-        else if (path.matches("^/+station/+([a-z]{4})/(24|72|120|168)?$"))
+        else if (path.matches("^/+station/+([a-z]{4})/((24|120)|(atl|pac))?$"))
         {
-            duration = path.group(2);
+            duration = path.group(3);
+            ocean = path.group(4);
             Map<String, String> station = Locator.STATION.get(path.group(1).toUpperCase());
             radar = Locator.NEXRAD.nearest(station);
             cwa = Locator.CWA.nearest(station);
@@ -178,10 +183,11 @@ public class LocatorFilter implements Filter
             {
                 URLDataFetcher.Result graph = fetcher.getResult(new Graph(stations));
                 request.setAttribute("graph", graph.getData());
-                request.setAttribute("duration", duration);
             }
             request.setAttribute("current", current.getData());
             request.setAttribute("forecast", forecast.getData());
+            request.setAttribute("duration", duration);
+            request.setAttribute("ocean", ocean);
             dispatcher = request.getRequestDispatcher("/weather.jsp");
         }
         dispatcher.forward(request, response);
