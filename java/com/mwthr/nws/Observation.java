@@ -166,7 +166,7 @@ public class Observation
     {
         String text = props.get("observation_time_rfc822");
         long timestamp = parseDate(format, text);
-Logger.getLogger(getClass().getName()).log(Level.INFO, "observation_time_rfc822: " + text + " -> " + (timestamp > cutoff));
+Logger.getLogger(getClass().getName()).log(Level.FINE, "observation_time_rfc822: " + text + " -> " + (timestamp > cutoff));
         return (timestamp > cutoff);
     }
 }

@@ -54,7 +54,8 @@
 </tr>
 </tbody>
 </table>
-<img alt="forecast" class="forecast" height="220" src="<c:out value="${graph.graph24}" />" width="596" />
+<div class="forecast">
+<img alt="24 hour forecast" height="330" src="<c:out value="${graph.graph24}" />" width="596" /></div>
 </c:when>
 <c:when test="${duration==120}">
 <td width="20%"><div class="tab"><a href="." class="tab-a">Radar</a></div></td>
@@ -65,7 +66,8 @@
 </tr>
 </tbody>
 </table>
-<img alt="forecast" class="forecast" height="220" src="<c:out value="${graph.graph120}" />" width="596" />
+<div class="forecast">
+<img alt="5 day forecast" height="330" src="<c:out value="${graph.graph120}" />" width="596" /></div>
 </c:when>
 <c:when test="${ocean=='atl'}">
 <td width="20%"><div class="tab"><a href="." class="tab-a">Radar</a></div></td>
@@ -77,7 +79,7 @@
 </tbody>
 </table>
 <div class="summary summary-ocean">
-<img alt="radar" class="summary-ocean-image" height="353" src="http://www.nhc.noaa.gov/overview_atl/atl_overview.gif" width="565" />
+<img alt="Atlantic tropical cyclone activity" class="summary-ocean-image" height="353" src="http://www.nhc.noaa.gov/overview_atl/atl_overview.gif" width="565" />
 </div>
 </c:when>
 <c:when test="${ocean=='pac'}">
@@ -90,7 +92,7 @@
 </tbody>
 </table>
 <div class="summary summary-ocean">
-<img alt="radar" class="summary-ocean-image" height="353" src="http://www.nhc.noaa.gov/overview_epac/epac_overview.gif" width="565" />
+<img alt="Eastern pacific tropical cyclone activity" class="summary-ocean-image" height="353" src="http://www.nhc.noaa.gov/overview_epac/epac_overview.gif" width="565" />
 </div>
 </c:when>
 <c:otherwise>
@@ -102,7 +104,7 @@
 </tr>
 </tbody>
 </table>
-<noscript><img alt="radar" height="550" src="<c:out value="${radar.baseurl}" />Loop.gif" width="600" /></noscript>
+<noscript><img alt="<c:out value="${radar.icao}" /> Radar" height="550" src="<c:out value="${radar.baseurl}" />Loop.gif" width="600" /></noscript>
 <input id="jsloop" name="jsloop" type="hidden" value="<c:out value="${radar.baseurl}" />" />
 <script type="text/javascript">
 /* <![CDATA[ */

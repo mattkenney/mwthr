@@ -85,7 +85,7 @@ public class Graph
     {
         StringBuilder buffer = new StringBuilder();
         buffer.append("http://chart.apis.google.com/chart");
-        buffer.append("?chs=596x220"); // Chart size
+        buffer.append("?chs=596x330"); // Chart size
         buffer.append("&cht=lxy"); // Chart Type
         buffer.append("&chco=FF0000,0000CC"); // Series colors
         buffer.append("&chdl=Temperature|Chance+of+Precipitation"); // Chart legend text
@@ -199,7 +199,7 @@ public class Graph
     {
         String text = props.get("creation-date");
         long timestamp = WeatherDataHandler.parseDate(formatCreation, text);
-Logger.getLogger(getClass().getName()).log(Level.INFO, "creation-date: " + text + " -> " + (timestamp > cutoff));
+Logger.getLogger(getClass().getName()).log(Level.FINE, "creation-date: " + text + " -> " + (timestamp > cutoff));
         return (timestamp > cutoff);
     }
 

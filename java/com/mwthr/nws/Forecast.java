@@ -234,7 +234,7 @@ public class Forecast
     {
         String text = props.get("creation-date");
         long timestamp = parseDate(format, text);
-Logger.getLogger(getClass().getName()).log(Level.INFO, "creation-date: " + text + " -> " + (timestamp > cutoff));
+Logger.getLogger(getClass().getName()).log(Level.FINE, "creation-date: " + text + " -> " + (timestamp > cutoff));
         return (timestamp > cutoff);
     }
 }

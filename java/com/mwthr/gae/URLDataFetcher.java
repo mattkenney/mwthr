@@ -59,8 +59,7 @@ public class URLDataFetcher
             boolean isFirst = true;
             for (URL dataURL : handler.getURLs())
             {
-                Map<String, String> props = cache.get(dataURL);
-Logger.getLogger(getClass().getName()).log(Level.INFO, "cache: " + dataURL + " -> " + (props != null));
+                Map<String, String> props = cache.get(String.valueOf(dataURL));
 
                 if (props == null || !handler.isValid(props))
                 {
@@ -113,8 +112,9 @@ Logger.getLogger(getClass().getName()).log(Level.INFO, "cache: " + dataURL + " -
                         Map<String, String> props = (data == null) ? null : handler.parse(entry.getKey(), data);
                         if (props != null && handler.isValid(props))
                         {
-Logger.getLogger(getClass().getName()).log(Level.INFO, "caching: " + entry.getKey());
-                            cache.put(entry.getKey(), props);
+                            Logger.getLogger(getClass().getName()).log(Level.INFO, "caching:\n" + entry.getKey());
+                            cache.put(String.valueOf(entry.getKey()), props);
+
                             value = props;
                             break;
                         }
@@ -142,14 +142,14 @@ Logger.getLogger(getClass().getName()).log(Level.INFO, "caching: " + entry.getKe
 
     private static final long DEADLINE_DELTA = 100;
 
-    private final static FetchOptions options = FetchOptions.Builder
+    private static final FetchOptions options = FetchOptions.Builder
                                             .disallowTruncate()
                                             .followRedirects()
                                             .setDeadline(DEADLINE)
                                             .validateCertificate()
                                             ;
 
-    private Map<URL, Map<String, String>> cache = null;
+    private Map<String, Map<String, String>> cache = null;
     private final URLFetchService service = URLFetchServiceFactory.getURLFetchService();
 
     @SuppressWarnings("unchecked")
