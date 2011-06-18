@@ -41,7 +41,7 @@
 <tr><td class="label">Radar:</td><td><c:out value="${radar.name}" /></td><td class="option"><a href="<c:out value="${radar.statusurl}" />" target="_blank">radar status</a> | <a href="/icao/">change location</a></td></tr>
 </tbody>
 </table>
-<table class="summary summary-middle">
+<table class="summary summary-middle tabs">
 <tbody>
 <tr>
 <c:choose>
