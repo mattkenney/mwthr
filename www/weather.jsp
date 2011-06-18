@@ -41,16 +41,16 @@
 <tr><td class="label">Radar:</td><td><c:out value="${radar.name}" /></td><td class="option"><a href="<c:out value="${radar.statusurl}" />" target="_blank">radar status</a> | <a href="/icao/">change location</a></td></tr>
 </tbody>
 </table>
-<table cellpadding="0" cellspacing="0" class="summary summary-middle">
+<table class="summary summary-middle">
 <tbody>
 <tr>
 <c:choose>
 <c:when test="${duration==24}">
-<td width="20%"><div class="tab"><a href="." class="tab-a">Radar</a></div></td>
-<td width="20%"><div class="tab tab-active">24 Hours</div></td>
-<td width="20%"><div class="tab"><a href="120" class="tab-a">5 Days</a></div></td>
-<td width="20%"><div class="tab"><a href="atl" class="tab-a">Atlantic</a></div></td>
-<td width="20%"><div class="tab"><a href="pac" class="tab-a">Pacific</a></div></td>
+<td class="tab"><div class="tab-div"><a href="." class="tab-a">Radar</a></div></td>
+<td class="tab"><div class="tab-div tab-active">24 Hours</div></td>
+<td class="tab"><div class="tab-div"><a href="120" class="tab-a">5 Days</a></div></td>
+<td class="tab"><div class="tab-div"><a href="atl" class="tab-a">Atlantic</a></div></td>
+<td class="tab"><div class="tab-div"><a href="pac" class="tab-a">Pacific</a></div></td>
 </tr>
 </tbody>
 </table>
@@ -58,11 +58,11 @@
 <img alt="24 hour forecast" height="330" src="<c:out value="${graph.graph24}" />" width="596" /></div>
 </c:when>
 <c:when test="${duration==120}">
-<td width="20%"><div class="tab"><a href="." class="tab-a">Radar</a></div></td>
-<td width="20%"><div class="tab"><a href="24" class="tab-a">24 Hours</a></div></td>
-<td width="20%"><div class="tab tab-active">5 Days</div></td>
-<td width="20%"><div class="tab"><a href="atl" class="tab-a">Atlantic</a></div></td>
-<td width="20%"><div class="tab"><a href="pac" class="tab-a">Pacific</a></div></td>
+<td class="tab"><div class="tab-div"><a href="." class="tab-a">Radar</a></div></td>
+<td class="tab"><div class="tab-div"><a href="24" class="tab-a">24 Hours</a></div></td>
+<td class="tab"><div class="tab-div tab-active">5 Days</div></td>
+<td class="tab"><div class="tab-div"><a href="atl" class="tab-a">Atlantic</a></div></td>
+<td class="tab"><div class="tab-div"><a href="pac" class="tab-a">Pacific</a></div></td>
 </tr>
 </tbody>
 </table>
@@ -70,11 +70,11 @@
 <img alt="5 day forecast" height="330" src="<c:out value="${graph.graph120}" />" width="596" /></div>
 </c:when>
 <c:when test="${ocean=='atl'}">
-<td width="20%"><div class="tab"><a href="." class="tab-a">Radar</a></div></td>
-<td width="20%"><div class="tab"><a href="24" class="tab-a">24 Hours</a></div></td>
-<td width="20%"><div class="tab"><a href="120" class="tab-a">5 Days</a></div></td>
-<td width="20%"><div class="tab tab-active">Atlantic</div></td>
-<td width="20%"><div class="tab"><a href="pac" class="tab-a">Pacific</a></div></td>
+<td class="tab"><div class="tab-div"><a href="." class="tab-a">Radar</a></div></td>
+<td class="tab"><div class="tab-div"><a href="24" class="tab-a">24 Hours</a></div></td>
+<td class="tab"><div class="tab-div"><a href="120" class="tab-a">5 Days</a></div></td>
+<td class="tab"><div class="tab-div tab-active">Atlantic</div></td>
+<td class="tab"><div class="tab-div"><a href="pac" class="tab-a">Pacific</a></div></td>
 </tr>
 </tbody>
 </table>
@@ -83,11 +83,11 @@
 </div>
 </c:when>
 <c:when test="${ocean=='pac'}">
-<td width="20%"><div class="tab"><a href="." class="tab-a">Radar</a></div></td>
-<td width="20%"><div class="tab"><a href="24" class="tab-a">24 Hours</a></div></td>
-<td width="20%"><div class="tab"><a href="120" class="tab-a">5 Days</a></div></td>
-<td width="20%"><div class="tab"><a href="atl" class="tab-a">Atlantic</a></div></td>
-<td width="20%"><div class="tab tab-active">Pacific</div></td>
+<td class="tab"><div class="tab-div"><a href="." class="tab-a">Radar</a></div></td>
+<td class="tab"><div class="tab-div"><a href="24" class="tab-a">24 Hours</a></div></td>
+<td class="tab"><div class="tab-div"><a href="120" class="tab-a">5 Days</a></div></td>
+<td class="tab"><div class="tab-div"><a href="atl" class="tab-a">Atlantic</a></div></td>
+<td class="tab"><div class="tab-div tab-active">Pacific</div></td>
 </tr>
 </tbody>
 </table>
@@ -96,11 +96,11 @@
 </div>
 </c:when>
 <c:otherwise>
-<td width="20%"><div class="tab tab-active">Radar</div></td>
-<td width="20%"><div class="tab"><a href="24" class="tab-a">24 Hours</a></div></td>
-<td width="20%"><div class="tab"><a href="120" class="tab-a">5 Days</a></div></td>
-<td width="20%"><div class="tab"><a href="atl" class="tab-a">Atlantic</a></div></td>
-<td width="20%"><div class="tab"><a href="pac" class="tab-a">Pacific</a></div></td>
+<td class="tab"><div class="tab-div tab-active">Radar</div></td>
+<td class="tab"><div class="tab-div"><a href="24" class="tab-a">24 Hours</a></div></td>
+<td class="tab"><div class="tab-div"><a href="120" class="tab-a">5 Days</a></div></td>
+<td class="tab"><div class="tab-div"><a href="atl" class="tab-a">Atlantic</a></div></td>
+<td class="tab"><div class="tab-div"><a href="pac" class="tab-a">Pacific</a></div></td>
 </tr>
 </tbody>
 </table>

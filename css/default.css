@@ -59,6 +59,7 @@ img
 {
     background-color:white;
     border:2px solid #000;
+    border-collapse:collapse;
     width:600px;
 }
 
@@ -98,6 +99,12 @@ img
 }
 
 .tab
+{
+    padding:0px;
+    width:20%;
+}
+
+.tab-div
 {
     border-left:1px solid #737373;
     border-right:1px solid #737373;
