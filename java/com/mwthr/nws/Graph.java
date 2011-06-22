@@ -202,7 +202,7 @@ public class Graph
         long timestamp = WeatherDataHandler.parseDate(formatCreation, text);
         boolean result = (timestamp > cutoff);
         Calendar cal = formatCreation.getCalendar();
-        cal.setTimeInMillis(System.currentTimeMillis());
+        cal.setTimeInMillis(timestamp);
         Logger.getLogger(getClass().getName()).log(result ? Level.FINE : Level.INFO, text + ", parsed " + formatCreation.format(cal.getTime()) + ", returning " + result);
         return result;
     }

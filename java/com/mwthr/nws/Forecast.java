@@ -236,7 +236,7 @@ public class Forecast
         long timestamp = parseDate(format, text);
         boolean result = (timestamp > cutoff);
         Calendar cal = format.getCalendar();
-        cal.setTimeInMillis(System.currentTimeMillis());
+        cal.setTimeInMillis(timestamp);
         Logger.getLogger(getClass().getName()).log(result ? Level.FINE : Level.INFO, text + ", parsed " + format.format(cal.getTime()) + ", returning " + result);
         return result;
     }
