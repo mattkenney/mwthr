@@ -24,6 +24,7 @@ import java.net.URL;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -199,8 +200,11 @@ public class Graph
     {
         String text = props.get("creation-date");
         long timestamp = WeatherDataHandler.parseDate(formatCreation, text);
-Logger.getLogger(getClass().getName()).log(Level.FINE, "creation-date: " + text + " -> " + (timestamp > cutoff));
-        return (timestamp > cutoff);
+        boolean result = (timestamp > cutoff);
+        Calendar cal = formatCreation.getCalendar();
+        cal.setTimeInMillis(System.currentTimeMillis());
+        Logger.getLogger(getClass().getName()).log(result ? Level.FINE : Level.INFO, text + ", parsed " + formatCreation.format(cal.getTime()) + ", returning " + result);
+        return result;
     }
 
     @Override

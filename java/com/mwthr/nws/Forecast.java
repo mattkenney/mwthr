@@ -197,7 +197,7 @@ public class Forecast
         cal.set(Calendar.MILLISECOND, 0);
         StringBuilder buffer = new StringBuilder();
         buffer.append("http://www.weather.gov/forecasts/xml/sample_products/browser_interface/ndfdXMLclient.php");
-        buffer.append("?product=time-series&maxt=maxt&mint=mint&pop12=pop12");
+        buffer.append("?product=time-series&temp=temp&pop12=pop12");
         buffer.append("&end=");
         buffer.append(format.format(cal.getTime()));
         int length = buffer.length();
@@ -234,7 +234,10 @@ public class Forecast
     {
         String text = props.get("creation-date");
         long timestamp = parseDate(format, text);
-Logger.getLogger(getClass().getName()).log(Level.FINE, "creation-date: " + text + " -> " + (timestamp > cutoff));
-        return (timestamp > cutoff);
+        boolean result = (timestamp > cutoff);
+        Calendar cal = format.getCalendar();
+        cal.setTimeInMillis(System.currentTimeMillis());
+        Logger.getLogger(getClass().getName()).log(result ? Level.FINE : Level.INFO, text + ", parsed " + format.format(cal.getTime()) + ", returning " + result);
+        return result;
     }
 }

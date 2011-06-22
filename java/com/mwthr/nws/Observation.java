@@ -25,6 +25,7 @@ import java.net.URL;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -166,7 +167,10 @@ public class Observation
     {
         String text = props.get("observation_time_rfc822");
         long timestamp = parseDate(format, text);
-Logger.getLogger(getClass().getName()).log(Level.FINE, "observation_time_rfc822: " + text + " -> " + (timestamp > cutoff));
-        return (timestamp > cutoff);
+        boolean result = (timestamp > cutoff);
+        Calendar cal = format.getCalendar();
+        cal.setTimeInMillis(System.currentTimeMillis());
+        Logger.getLogger(getClass().getName()).log(result ? Level.FINE : Level.INFO, text + ", parsed " + format.format(cal.getTime()) + ", returning " + result);
+        return result;
     }
 }
