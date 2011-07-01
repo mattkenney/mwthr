@@ -86,10 +86,10 @@ public class Graph
     {
         StringBuilder buffer = new StringBuilder();
         buffer.append("http://chart.apis.google.com/chart");
-        buffer.append("?chs=596x330"); // Chart size
+        buffer.append("?chs=298x250"); // Chart size
         buffer.append("&cht=lxy"); // Chart Type
         buffer.append("&chco=FF0000,0000CC"); // Series colors
-        buffer.append("&chdl=Temperature|Chance+of+Precipitation"); // Chart legend text
+        buffer.append("&chdl=Temperature|Probability+of+Precipitation"); // Chart legend text
         buffer.append("&chdlp=t"); // Chart legend position
         buffer.append("&chg=0,8,4,1,0,4"); // Grid
         buffer.append("&chxt=x,y,y,r,r"); // Visible Axes

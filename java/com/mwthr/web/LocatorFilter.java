@@ -224,7 +224,7 @@ public class LocatorFilter implements Filter
                 double latitude = Double.parseDouble(lat);
                 double longitude = Double.parseDouble(lon);
                 long timestamp = Long.parseLong(utc);
-                if (-90.0 <= latitude && latitude <= 90.0 && -180.0 <= longitude && longitude <= 180.0 && (System.currentTimeMillis() - timestamp) < 1800000L)
+                if (-90.0 <= latitude && latitude <= 90.0 && -180.0 <= longitude && longitude <= 180.0 && (System.currentTimeMillis() - timestamp) < 300000L)
                 {
                     result = new double[] { latitude, longitude };
                 }
