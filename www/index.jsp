@@ -30,7 +30,7 @@
 <style type="text/css">
 <% pageContext.include("/css/default.css"); %>
 </style>
-<title>mwthr.com</title>
+<title>Mobile Weather - mwthr.com</title>
 </head>
 <body>
 <div class="overall">

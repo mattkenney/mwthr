@@ -35,8 +35,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -56,11 +56,13 @@ public class Graph
      */
     private static final long CACHE_LIFE = 5400000L;
 
-    private final DateFormat formatCreation, formatForecast;
+    private final DateFormat formatCreation, formatForecast, formatHour, formatDay;
 
     private final List<Map<String, String>> stations;
 
     private final long cutoff;
+    
+    private TimeZone tz = null;
 
     /**
      * Constructor.
@@ -80,9 +82,17 @@ public class Graph
         // format for parsing observation timestamp
         formatForecast = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ", Locale.US);
         formatForecast.setTimeZone(TimeZone.getTimeZone("GMT"));
+
+        // format for showing hour of day
+        formatHour = new SimpleDateFormat("h aa", Locale.US);
+        formatHour.setTimeZone(TimeZone.getTimeZone("GMT"));
+
+        // format for showing day of week
+        formatDay = new SimpleDateFormat("EEE", Locale.US);
+        formatDay.setTimeZone(TimeZone.getTimeZone("GMT"));
     }
 
-    private String makeGraphURL(Map<String, String> props, int max)
+    private String makeGraphURL(Map<String, String> props, long startTime, int hourCount)
     {
         StringBuilder buffer = new StringBuilder();
         buffer.append("http://chart.apis.google.com/chart");
@@ -93,74 +103,76 @@ public class Graph
         buffer.append("&chdlp=t"); // Chart legend position
         buffer.append("&chg=0,8,4,1,0,4"); // Grid
         buffer.append("&chxt=x,y,y,r,r"); // Visible Axes
-        buffer.append("&chxp=2,50|3,0,20,40,60,80,100|4,50"); // Axis Label Positions
         buffer.append("&chxs=1,FF0000|2,FF0000|3,0000CC|4,0000CC"); // Axis Label Style
 
         // Custom Axis Labels
-        buffer.append("&chxl=2:|%C2%B0F|4:|%25|0:");
-        int step = 0;
-        for (int i = 0; i <= 6; i++)
+        buffer.append("&chxl=0:");
+        DateFormat format = hourCount > 24 ? formatDay : formatHour;
+        Calendar cal = format.getCalendar();
+        cal.setTimeInMillis(startTime);
+        cal.set(Calendar.MINUTE, 0);
+        cal.set(Calendar.SECOND, 0);
+        cal.set(Calendar.MILLISECOND, 0);
+        StringBuilder positions = new StringBuilder();
+        for (int i = 1; i < hourCount; i++)
         {
-            buffer.append("|");
-            buffer.append(step);
-            buffer.append("h");
-            step += max/6;
+            cal.add(Calendar.HOUR_OF_DAY, 1);
+            if ((hourCount > 24) ? (cal.get(Calendar.HOUR_OF_DAY) == 12) : ((cal.get(Calendar.HOUR_OF_DAY) % 4) == 0))
+            {
+                long pos = (cal.getTimeInMillis() - startTime)/3600000L;
+                positions.append(",");
+                positions.append(pos);
+                buffer.append("|");
+                buffer.append(format.format(cal.getTime()));
+            }
         }
+        buffer.append("|2:|%C2%B0F|4:|%25");
+
+        // Axis Label Positions
+        buffer.append("&chxp=0");
+        buffer.append(positions.toString());
+        buffer.append("|1,0,20,40,60,80,100|2,50|3,0,20,40,60,80,100|4,50");
 
         // Axis Range
         buffer.append("&chxr=0,0,");
-        buffer.append(max);
+        buffer.append(hourCount);
         buffer.append("|1,-15,110|2,-15,110|3,-15,110|4,-15,110"); 
 
         // Data Scale
         buffer.append("&chds=0,");
-        buffer.append(max);
+        buffer.append(hourCount);
         buffer.append(",-15,110,0,");
-        buffer.append(max);
+        buffer.append(hourCount);
         buffer.append(",-15,110");
 
         // Data
         buffer.append("&chd=t");
 
-        String[] values = props.get("temperature-x").split(",");
-        int count = 0;
-        for (int i = 0; i < values.length; i++)
+        String[] data = new String[] { "temperature", "probability-of-precipitation" };
+
+        for (int k = 0; k < data.length; k++)
         {
-            if (Double.parseDouble(values[i]) > max)
+            String[] xValues = props.get(data[k] + "-x").split(",");
+            int count = 0;
+            for (int i = 0; i < xValues.length; i++)
             {
-                break;
+                if (Double.parseDouble(xValues[i]) > hourCount)
+                {
+                    break;
+                }
+                buffer.append(i > 0 ? "," : (k > 0 ? "|" : ":"));
+                buffer.append(xValues[i]);
+                count++;
             }
-            buffer.append(i > 0 ? "," : ":");
-            buffer.append(values[i]);
-            count++;
-        }
-        values = props.get("temperature-y").split(",");
-        for (int i = 0; i < count && i < values.length; i++)
-        {
-            buffer.append(i > 0 ? "," : "|");
-            buffer.append(values[i]);
-            count++;
+            String[] yValues = props.get(data[k] + "-y").split(",");
+            for (int i = 0; i < count && i < yValues.length; i++)
+            {
+                buffer.append(i > 0 ? "," : "|");
+                buffer.append(yValues[i]);
+                count++;
+            }
         }
 
-        values = props.get("probability-of-precipitation-x").split(",");
-        count = 0;
-        for (int i = 0; i < values.length; i++)
-        {
-            if (Double.parseDouble(values[i]) > max)
-            {
-                break;
-            }
-            buffer.append(i > 0 ? "," : "|");
-            buffer.append(values[i]);
-            count++;
-        }
-        values = props.get("probability-of-precipitation-y").split(",");
-        for (int i = 0; i < count && i < values.length; i++)
-        {
-            buffer.append(i > 0 ? "," : "|");
-            buffer.append(values[i]);
-            count++;
-        }
         return buffer.toString();
     }
 
@@ -296,10 +308,8 @@ public class Graph
                 result.put(yKey, buffer.toString());
             }
 
-            result.put("graph24", makeGraphURL(result, 24));
-            result.put("graph72", makeGraphURL(result, 72));
-            result.put("graph120", makeGraphURL(result, 120));
-            result.put("graph168", makeGraphURL(result, 168));
+            result.put("graph24", makeGraphURL(result, min, 24));
+            result.put("graph120", makeGraphURL(result, min, 120));
         }
         catch (Exception e)
         {
@@ -317,8 +327,16 @@ public class Graph
         // 0123456789012345678901234
         if (text != null && text.length() == 25)
         {
+            // need to remove the colon to parse the timestamp
             String s = text.substring(0, 22).concat(text.substring(23));
             result = WeatherDataHandler.parseDate(formatForecast, s);
+            // also note the first time zone we see
+            if (tz == null)
+            {
+                tz = TimeZone.getTimeZone("GMT".concat(text.substring(19)));
+                formatDay.setTimeZone(tz);
+                formatHour.setTimeZone(tz);
+            }
         }
         return result;
     }
