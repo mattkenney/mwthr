@@ -55,7 +55,7 @@ if (navigator.geolocation)
             document.cookie = 'lat=' + pos.coords.latitude;
             document.cookie = 'lon=' + pos.coords.longitude;
             document.cookie = 'utc=' + new Date().getTime();
-            location = location;
+            location = 'now';
         },
         null,
         {

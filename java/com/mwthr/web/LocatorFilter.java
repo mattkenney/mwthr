@@ -93,16 +93,21 @@ public class LocatorFilter implements Filter
         String ocean = null;
         boolean showPicker = false;
 
-        if (path.matches("^/+((24|120)|(atl|pac))?$"))
+        if (path.matches("^/+((now)|(24|120)|(atl|pac))?$"))
         {
-            duration = path.group(2);
-            ocean = path.group(3);
+            showPicker = (path.group(1) == null);
+            duration = path.group(3);
+            ocean = path.group(4);
             double[] where = getCoordinates(request);
             stations = Locator.STATION.nearest(where, STATION_COUNT);
-            showPicker = stations.isEmpty();
-            if (showPicker)
+            if (stations.isEmpty())
             {
                 where = GeoIP.getCoordinates(config.getServletContext(), request);
+                stations = Locator.STATION.nearest(where, STATION_COUNT);
+            }
+            if (stations.isEmpty())
+            {
+                where = new double[] { 40.0, -75.0 };
                 stations = Locator.STATION.nearest(where, STATION_COUNT);
             }
             cwa = Locator.CWA.nearest(where);
