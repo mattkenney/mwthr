@@ -26412,7 +26412,7 @@
 	<station>
 		<station_id>KRUT</station_id>
 		<state>VT</state>
-            	<station_name>Rutland State Automatic Weather Observing / Report</station_name>
+            	<station_name>Rutland-Southern Vermont Regional Airport</station_name>
 		<latitude>43.54</latitude>
 		<longitude>-72.95</longitude>
             	<html_url>http://weather.noaa.gov/weather/current/KRUT.html</html_url>

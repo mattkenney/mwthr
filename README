@@ -5,14 +5,16 @@ Source code: https://github.com/mattkenney/mwthr
 Language: Java 5.0
 License: GNU Affero General Public License
 
+http://www.mwthr.com/
+
 mwthr uses National Weather Service (NWS) static data:
 
     NWS weather stations
     http://www.weather.gov/xml/current_obs/index.xml
 
     NWS public forecast zones in (windows-1252) -
-    http://www.weather.gov/geodata/catalog/wsom/data/bp01de10.dbx
     http://www.weather.gov/geodata/catalog/wsom/html/cntyzone.htm
+    http://www.weather.gov/geodata/catalog/wsom/data/bp31my11.dbx
 
     NEXRAD locations -
     https://mi3.ncdc.noaa.gov//mi3report/MISC/nexrad-stations.TXT

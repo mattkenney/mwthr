@@ -50,7 +50,7 @@ public class LocatorFilter implements Filter
     /**
      * The number of nearest observation stations to find.
      */
-    private static final int STATION_COUNT = 4;
+    private static final int STATION_COUNT = 6;
 
     /**
      * The <code>FilterConfig</code> passed to
