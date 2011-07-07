@@ -24,7 +24,7 @@
 <head>
 <meta content="text/html;charset=UTF-8" http-equiv="Content-type" />
 <!-- source code: https://github.com/mattkenney/mwthr -->
-<meta content="initial-scale=1.0" name="viewport" />
+<meta content="initial-scale=1.0, maximum-scale=4.0" name="viewport" />
 <link href="/images/logo.png" rel="apple-touch-icon" />
 <style type="text/css">
 <% pageContext.include("/css/default.css"); %>

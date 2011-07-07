@@ -153,23 +153,52 @@ public class Graph
         for (int k = 0; k < data.length; k++)
         {
             String[] xValues = props.get(data[k] + "-x").split(",");
+            String[] yValues = props.get(data[k] + "-y").split(",");
             int count = 0;
             for (int i = 0; i < xValues.length; i++)
             {
-                if (Double.parseDouble(xValues[i]) > hourCount)
+                final double x = Double.parseDouble(xValues[i]);
+                if (x < 0)
                 {
-                    break;
+                    // interpolate at start of graph, if possible
+                    if (i + 1 < xValues.length && i < yValues.length)
+                    {
+                        final double x2 = Double.parseDouble(xValues[i + 1]);
+                        final double xc = Math.min(x2, 0.0);
+                        final double y1 = Double.parseDouble(yValues[i]);
+                        final double y2 = Double.parseDouble(yValues[i + 1]);
+                        final double yc = y1 + (xc - x)/(x2 - x)*(y2 - y1);
+                        xValues[i] = String.format("%.2f", xc);
+                        yValues[i] = String.format("%.2f", yc);
+                    }
+                }
+                else if (x > hourCount)
+                {
+                    // interpolate at end of graph, if possible
+                    if (i < 1 || yValues.length <= i)
+                    {
+                        break;
+                    }
+                    final double x1 = Double.parseDouble(xValues[i - 1]);
+                    final double xc = hourCount;
+                    final double y1 = Double.parseDouble(yValues[i - 1]);
+                    final double y2 = Double.parseDouble(yValues[i]);
+                    final double yc = y1 + (xc - x1)/(x - x1)*(y2 - y1);
+                    xValues[i] = String.format("%.2f", xc);
+                    yValues[i] = String.format("%.2f", yc);
                 }
                 buffer.append(i > 0 ? "," : (k > 0 ? "|" : ":"));
                 buffer.append(xValues[i]);
                 count++;
+                if (x > hourCount)
+                {
+                    break;
+                }
             }
-            String[] yValues = props.get(data[k] + "-y").split(",");
             for (int i = 0; i < count && i < yValues.length; i++)
             {
                 buffer.append(i > 0 ? "," : "|");
                 buffer.append(yValues[i]);
-                count++;
             }
         }
 
@@ -283,7 +312,7 @@ public class Graph
                         {
                             buffer.append(",");
                         }
-                        buffer.append((start - min)/3600000.0);
+                        buffer.append(String.format("%.2f", (start - min)/3600000.0));
                     }
                 }
                 result.put(xKey, buffer.toString());
