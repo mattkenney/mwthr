@@ -1,52 +1,35 @@
 (function(){
 
-if (window.addEventListener)
-{
-    addEventListener(
-        'load',
-        function ()
+setTimeout(
+    function ()
+    {
+        if (navigator.geolocation)
         {
-            setTimeout(
-                function ()
+            navigator.geolocation.getCurrentPosition(
+                function (pos)
                 {
-                    scrollTo(0, 1);
+                    document.cookie = 'lat=' + pos.coords.latitude;
+                    document.cookie = 'lon=' + pos.coords.longitude;
+                    document.cookie = 'utc=' + new Date().getTime();
+                    location = location;
                 },
-                1
+                function (pos)
+                {
+                    location = location;
+                },
+                {
+                    enableHighAccuracy:false,
+                    maximumAge:1800000,
+                    timeout:6000
+                }
             );
-        },
-        false
-    );
-}
-
-if (navigator.geolocation)
-{
-    var start = new Date().getTime();
-
-    setInterval(
-        function ()
+        }
+        else
         {
-            var now = new Date().getTime();
-            if (now - start > 600000)
-            {
-                navigator.geolocation.getCurrentPosition(
-                    function (pos)
-                    {
-                        document.cookie = 'lat=' + pos.coords.latitude;
-                        document.cookie = 'lon=' + pos.coords.longitude;
-                        document.cookie = 'utc=' + new Date().getTime();
-                        location = location;
-                    },
-                    null,
-                    {
-                        enableHighAccuracy:false,
-                        maximumAge:1800000,
-                        timeout:6000
-                    }
-                );
-            }
-        },
-        10000
-    );
-}
+            location = location;
+        }
+    },
+    600000
+);
 
 })();
