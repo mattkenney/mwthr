@@ -29,6 +29,13 @@ img
     width:298px;
 }
 
+.info
+{
+    font-size:200%;
+    height:418px;
+    text-align:center;
+}
+
 .label
 {
     vertical-align:top;
