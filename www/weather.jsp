@@ -52,7 +52,7 @@
 <tr>
 <c:choose>
 <c:when test="${duration==24}">
-<td class="tab"><div class="tab-div"><a href="." class="tab-a">Radar</a></div></td>
+<td class="tab"><div class="tab-div"><a href="now" class="tab-a">Radar</a></div></td>
 <td class="tab"><div class="tab-div tab-active">24 Hour</div></td>
 <td class="tab"><div class="tab-div"><a href="120" class="tab-a">5 Day</a></div></td>
 <td class="tab"><div class="tab-div"><a href="atl" class="tab-a">Atlantic</a></div></td>
@@ -64,7 +64,7 @@
 <img alt="24 hour forecast" height="250" src="<c:out value="${graph.graph24}" />" width="298" /></div>
 </c:when>
 <c:when test="${duration==120}">
-<td class="tab"><div class="tab-div"><a href="." class="tab-a">Radar</a></div></td>
+<td class="tab"><div class="tab-div"><a href="now" class="tab-a">Radar</a></div></td>
 <td class="tab"><div class="tab-div"><a href="24" class="tab-a">24 Hour</a></div></td>
 <td class="tab"><div class="tab-div tab-active">5 Day</div></td>
 <td class="tab"><div class="tab-div"><a href="atl" class="tab-a">Atlantic</a></div></td>
@@ -76,7 +76,7 @@
 <img alt="5 day forecast" height="250" src="<c:out value="${graph.graph120}" />" width="298" /></div>
 </c:when>
 <c:when test="${ocean=='atl'}">
-<td class="tab"><div class="tab-div"><a href="." class="tab-a">Radar</a></div></td>
+<td class="tab"><div class="tab-div"><a href="now" class="tab-a">Radar</a></div></td>
 <td class="tab"><div class="tab-div"><a href="24" class="tab-a">24 Hour</a></div></td>
 <td class="tab"><div class="tab-div"><a href="120" class="tab-a">5 Day</a></div></td>
 <td class="tab"><div class="tab-div tab-active">Atlantic</div></td>
@@ -89,7 +89,7 @@
 </div>
 </c:when>
 <c:when test="${ocean=='pac'}">
-<td class="tab"><div class="tab-div"><a href="." class="tab-a">Radar</a></div></td>
+<td class="tab"><div class="tab-div"><a href="now" class="tab-a">Radar</a></div></td>
 <td class="tab"><div class="tab-div"><a href="24" class="tab-a">24 Hour</a></div></td>
 <td class="tab"><div class="tab-div"><a href="120" class="tab-a">5 Day</a></div></td>
 <td class="tab"><div class="tab-div"><a href="atl" class="tab-a">Atlantic</a></div></td>
