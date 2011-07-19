@@ -113,7 +113,7 @@ public class LocatorFilter implements Filter
             cwa = Locator.CWA.nearest(where);
             radar = Locator.NEXRAD.nearest(where);
         }
-        else if (path.matches("^/+icao/+([a-z]{4})/((24|120)|(atl|pac))?$"))
+        else if (path.matches("^/+icao/+([a-z]{4})/((24|120)|(atl|pac)|(now))?$"))
         {
             duration = path.group(3);
             ocean = path.group(4);
@@ -126,7 +126,7 @@ public class LocatorFilter implements Filter
                 return;
             }
         }
-        else if (path.matches("^/+cwa/+([0-9]{3})/((24|120)|(atl|pac))?$"))
+        else if (path.matches("^/+cwa/+([0-9]{3})/((24|120)|(atl|pac)|(now))?$"))
         {
             duration = path.group(3);
             ocean = path.group(4);
@@ -139,7 +139,7 @@ public class LocatorFilter implements Filter
                 return;
             }
         }
-        else if (path.matches("^/+station/+([a-z]{4})/((24|120)|(atl|pac))?$"))
+        else if (path.matches("^/+station/+([a-z]{4})/((24|120)|(atl|pac)|(now))?$"))
         {
             duration = path.group(3);
             ocean = path.group(4);
