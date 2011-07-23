@@ -89,6 +89,7 @@ public class LocatorFilter implements Filter
         List<Map<String, String>> stations = null;
         Map<String, String> cwa = null;
         Map<String, String> radar = null;
+        Map<String, String> place = null;
         String duration = null;
         String ocean = null;
         boolean showPicker = false;
@@ -112,6 +113,7 @@ public class LocatorFilter implements Filter
             }
             cwa = Locator.CWA.nearest(where);
             radar = Locator.NEXRAD.nearest(where);
+            place = Locator.PLACE.nearest(where);
         }
         else if (path.matches("^/+icao/+([a-z]{4})/((24|120)|(atl|pac)|(now))?$"))
         {
@@ -120,6 +122,7 @@ public class LocatorFilter implements Filter
             radar = Locator.NEXRAD.get(path.group(1).toUpperCase());
             stations = Locator.STATION.nearest(radar, STATION_COUNT);
             cwa = Locator.CWA.nearest(radar);
+            place = Locator.PLACE.nearest(radar);
             if (stations.isEmpty() || cwa == null)
             {
                 response.sendError(404);
@@ -133,6 +136,7 @@ public class LocatorFilter implements Filter
             cwa = Locator.CWA.get(path.group(1).toUpperCase());
             stations = Locator.STATION.nearest(cwa, STATION_COUNT);
             radar = Locator.NEXRAD.nearest(cwa);
+            place = Locator.PLACE.nearest(cwa);
             if (stations.isEmpty() || radar == null)
             {
                 response.sendError(404);
@@ -146,6 +150,7 @@ public class LocatorFilter implements Filter
             Map<String, String> station = Locator.STATION.get(path.group(1).toUpperCase());
             radar = Locator.NEXRAD.nearest(station);
             cwa = Locator.CWA.nearest(station);
+            place = Locator.PLACE.nearest(station);
             if (radar == null || cwa == null)
             {
                 response.sendError(404);
@@ -193,6 +198,7 @@ public class LocatorFilter implements Filter
             request.setAttribute("forecast", forecast.getData());
             request.setAttribute("duration", duration);
             request.setAttribute("ocean", ocean);
+            request.setAttribute("place", place);
             dispatcher = request.getRequestDispatcher("/weather.jsp");
         }
         dispatcher.forward(request, response);

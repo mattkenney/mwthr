@@ -43,6 +43,12 @@ public enum Locator
      * County Warning Areas.
      */
     CWA(new CountyWarningArea()),
+
+    /**
+     * Place names.
+     */
+    PLACE(new Place()),
+
     ;
 
     /**

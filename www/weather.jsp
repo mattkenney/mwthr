@@ -40,11 +40,10 @@
 <div class="overall">
 <table class="summary summary-top">
 <tbody>
-<tr><td class="label">County/Area:</td><td><c:out value="${cwa.name}, ${cwa.state}" /></td></tr>
-<tr><td class="label">Now:</td><td><c:if test="${empty current.temp_f}">?</c:if><c:out value="${current.temp_f}" /> &#176;F<c:if test="${!empty current.weather}">, <c:out value="${current.weather}" /></c:if></td></tr>
-<tr><td class="label">Next 24 hours:</td><td><c:if test="${empty forecast.temperature}">?</c:if><c:out value="${forecast.temperature}" /> &#176;F<c:if test="${!empty forecast['probability-of-precipitation']}">, <c:out value="${forecast['probability-of-precipitation']}" />% PoP</c:if></td></tr>
-<tr><td class="label">Radar:</td><td><c:out value="${radar.name}" /></td></tr>
-<tr><td colspan="2" class="option"><a href="/icao/">change location</a> | <a href="<c:out value="${radar.statusurl}" />" target="_blank">radar status</a></td></tr>
+<tr><td><c:out value="${place.nameshort}, ${place.state}" /></td><td class="option"><a href="/icao/">change</a></td></tr>
+<tr><td colspan="2">Now: <c:if test="${empty current.temp_f}">?</c:if><c:out value="${current.temp_f}" /> &#176;F<c:if test="${!empty current.weather}">, <c:out value="${current.weather}" /></c:if></td></tr>
+<tr><td colspan="2">Next 24 hours: <c:if test="${empty forecast.temperature}">?</c:if><c:out value="${forecast.temperature}" /> &#176;F<c:if test="${!empty forecast['probability-of-precipitation']}">, <c:out value="${forecast['probability-of-precipitation']}" />% PoP</c:if></td></tr>
+<tr><td>Radar: <c:out value="${radar.name}" /></td><td class="option"><a href="<c:out value="${radar.statusurl}" />" target="_blank">status</a></td></tr>
 </tbody>
 </table>
 <table class="summary summary-middle tabs">
@@ -85,7 +84,7 @@
 </tbody>
 </table>
 <div class="summary summary-ocean">
-<img alt="Atlantic tropical cyclone activity" class="summary-ocean-image" height="176" src="http://www.nhc.noaa.gov/overview_atl/atl_overview.gif" width="282" />
+<img alt="Atlantic tropical cyclone activity" class="summary-ocean-image" height="200" src="http://www.nhc.noaa.gov/tafb_latest/danger_atl_latestBW_sm2.gif" width="250" />
 </div>
 </c:when>
 <c:when test="${ocean=='pac'}">
@@ -98,7 +97,7 @@
 </tbody>
 </table>
 <div class="summary summary-ocean">
-<img alt="Eastern pacific tropical cyclone activity" class="summary-ocean-image" height="176" src="http://www.nhc.noaa.gov/overview_epac/epac_overview.gif" width="282" />
+<img alt="Eastern pacific tropical cyclone activity" class="summary-ocean-image" height="200" src="http://www.nhc.noaa.gov/tafb_latest/danger_pac_latestBW_sm2.gif" width="250" />
 </div>
 </c:when>
 <c:otherwise>

@@ -32,4 +32,22 @@ setTimeout(
     600000
 );
 
+if (window.addEventListener && (/\biPhone\b/i).test(navigator.userAgent))
+{
+    addEventListener(
+        'load',
+        function ()
+        {
+            setTimeout(
+                function ()
+                {
+                    scrollTo(0, 1);
+                },
+                1
+            );
+        },
+        false
+    );
+}
+
 })();
