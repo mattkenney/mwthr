@@ -109,7 +109,6 @@
 <input id="jsloop" name="jsloop" type="hidden" value="<c:out value="${radar.baseurl}" />" />
 <script type="text/javascript">
 /* <![CDATA[ */
-<% pageContext.include("/js/geoupdate.js"); %>
 <% pageContext.include("/js/radarloop.js"); %>
 /* ]]> */
 </script>
@@ -122,5 +121,10 @@
 </tbody>
 </table>
 </div>
+<script type="text/javascript">
+/* <![CDATA[ */
+<% pageContext.include("/js/geoupdate.js"); %>
+/* ]]> */
+</script>
 </body>
 </html>
