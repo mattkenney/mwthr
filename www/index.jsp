@@ -33,21 +33,14 @@
 <title>Mobile Weather - mwthr.com</title>
 </head>
 <body>
-<div class="overall">
-<noscript>
+<div class="overall" id="overall">
 <table class="summary updating">
 <tbody>
-<tr><td class="label" rowspan="2">Choose location:</td><td><a href="/icao/<c:out value="${fn:toLowerCase(radar.icao)}" />">County/Area - <c:out value="${cwa.name}" />, <c:out value="${cwa.state}" /></a></td></tr>
+<tr><td class="label" colspan="2">Updating location...</td></tr>
+<tr><td class="label" rowspan="2">Or choose location:</td><td><a href="/icao/<c:out value="${fn:toLowerCase(radar.icao)}" />"><c:out value="${place.nameshort}, ${place.state}" /></a></td></tr>
 <tr><td><a href="/icao/">other...</a></td></tr>
 </tbody>
 </table>
-</noscript>
-<form action="/" id="location" method="post">
-<input name="lat" type="hidden" value="" />
-<input name="lon" type="hidden" value="" />
-</form>
-<input id="icao" name="icao" type="hidden" value="/icao/<c:out value="${fn:toLowerCase(radar.icao)}" />" />
-<input id="name" name="name" type="hidden" value="County/Area - <c:out value="${cwa.name}" />, <c:out value="${cwa.state}" />" />
 </div>
 <script type="text/javascript">
 /* <![CDATA[ */

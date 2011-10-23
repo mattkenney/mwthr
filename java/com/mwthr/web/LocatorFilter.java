@@ -176,6 +176,7 @@ public class LocatorFilter implements Filter
         request.setAttribute("stations", stations);
         request.setAttribute("cwa", cwa);
         request.setAttribute("radar", radar);
+        request.setAttribute("place", place);
         RequestDispatcher dispatcher = null;
         if (stations == null || stations.isEmpty() || cwa == null || radar == null)
         {
@@ -191,14 +192,23 @@ public class LocatorFilter implements Filter
             URLDataFetcher.Result forecast = fetcher.getResult(new Forecast(stations));
             if (duration != null)
             {
-                URLDataFetcher.Result graph = fetcher.getResult(new Graph(stations));
-                request.setAttribute("graph", graph.getData());
+                Map<String, String> graph = fetcher.getResult(new Graph(stations)).getData();
+                if (graph != null && "1".equals(getCookie(request, "lrg")))
+                {
+                    for (String key : graph.keySet())
+                    {
+                        if (key.endsWith("x2"))
+                        {
+                            graph.put(key.substring(0, key.length() - 2), graph.get(key));
+                        }
+                    }
+                }
+                request.setAttribute("graph", graph);
             }
             request.setAttribute("current", current.getData());
             request.setAttribute("forecast", forecast.getData());
             request.setAttribute("duration", duration);
             request.setAttribute("ocean", ocean);
-            request.setAttribute("place", place);
             dispatcher = request.getRequestDispatcher("/weather.jsp");
         }
         dispatcher.forward(request, response);

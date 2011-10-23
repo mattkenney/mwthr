@@ -32,7 +32,7 @@
 <title>Mobile Weather - mwthr.com</title>
 </head>
 <body>
-<div class="overall">
+<div class="overall" id="overall">
 <table class="summary summary-top">
 <tbody>
 <tr><td class="option"><a href="/">my location</a></td></tr>

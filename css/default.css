@@ -7,7 +7,6 @@
 body
 {
     background-color:#ccc;
-/*    min-height:500px;*/
 }
 
 html
@@ -29,6 +28,12 @@ img
     width:298px;
 }
 
+.forecast-image
+{
+    height:250px;
+    width:298px;
+}
+
 .info
 {
     font-size:200%;
@@ -36,15 +41,10 @@ img
     text-align:center;
 }
 
-/*
 .label
 {
     vertical-align:top;
-    text-align:right;
-    white-space:nowrap;
-    width:1%;
 }
-*/
 
 .option
 {
@@ -57,6 +57,14 @@ img
 {
     margin-left:auto;
     margin-right:auto;
+    width:300px;
+}
+
+.radar-image
+{
+    height:275px;
+    margin-left:-1px;
+    margin-top:-1px;
     width:300px;
 }
 
@@ -104,8 +112,10 @@ img
 
 .summary-ocean-image
 {
+    height:200px;
     margin-left:24px;
     margin-top:16px;
+    width:250px;
 }
 
 .summary-middle
@@ -159,4 +169,72 @@ img
 .updating
 {
     margin-top:120px;
+}
+
+@media all and/*!*/(min-width:610px)
+{
+
+    .forecast
+    {
+        height:536px;
+        width:598px;
+    }
+
+    .forecast-image
+    {
+        height:500px;
+        width:596px;
+    }
+
+    .info
+    {
+        height:836px;
+    }
+
+    .overall
+    {
+        width:600px;
+    }
+
+    .radar-image
+    {
+        height:550px;
+        width:600px;
+    }
+
+    .subtle
+    {
+        width:600px;
+    }
+
+    .summary
+    {
+        width:600px;
+    }
+
+    .summary-radar
+    {
+        height:546px;
+        width:598px;
+    }
+
+    .summary-national
+    {
+        height:282px;
+        width:598px;
+    }
+
+    .summary-ocean
+    {
+        height:546px;
+        width:598px;
+    }
+
+    .summary-ocean-image
+    {
+        height:400px;
+        margin-left:48px;
+        width:500px;
+    }
+
 }

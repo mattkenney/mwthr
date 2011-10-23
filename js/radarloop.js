@@ -45,10 +45,7 @@ var makeImage = function (n)
         img.onerror();
     };
     img.src = hidden.value + (7 - n) + '.png';
-    img.height = 275;
-    img.width = 300;
-    img.style.marginLeft = '-1px';
-    img.style.marginTop = '-1px';
+    img.className = 'radar-image';
     images[n] = img;
 };
 

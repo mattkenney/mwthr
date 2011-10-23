@@ -37,7 +37,7 @@
 <title>Mobile Weather - mwthr.com</title>
 </head>
 <body>
-<div class="overall">
+<div class="overall" id="overall">
 <table class="summary summary-top">
 <tbody>
 <tr><td><c:out value="${place.nameshort}, ${place.state}" /></td><td class="option"><a href="/icao/">change</a></td></tr>
@@ -60,7 +60,7 @@
 </tbody>
 </table>
 <div class="forecast">
-<img alt="24 hour forecast" height="250" src="<c:out value="${graph.graph24}" />" width="298" /></div>
+<img alt="24 hour forecast" class="forecast-image" src="<c:out value="${graph.graph24}" />" /></div>
 </c:when>
 <c:when test="${duration==120}">
 <td class="tab"><div class="tab-div"><a href="now" class="tab-a">Radar</a></div></td>
@@ -72,7 +72,7 @@
 </tbody>
 </table>
 <div class="forecast">
-<img alt="5 day forecast" height="250" src="<c:out value="${graph.graph120}" />" width="298" /></div>
+<img alt="5 day forecast" class="forecast-image" src="<c:out value="${graph.graph120}" />" /></div>
 </c:when>
 <c:when test="${ocean=='atl'}">
 <td class="tab"><div class="tab-div"><a href="now" class="tab-a">Radar</a></div></td>
@@ -84,7 +84,7 @@
 </tbody>
 </table>
 <div class="summary summary-ocean">
-<img alt="Atlantic tropical cyclone activity" class="summary-ocean-image" height="200" src="http://www.nhc.noaa.gov/tafb_latest/danger_atl_latestBW_sm2.gif" width="250" />
+<img alt="Atlantic tropical cyclone activity" class="summary-ocean-image" src="http://www.nhc.noaa.gov/tafb_latest/danger_atl_latestBW_sm2.gif" />
 </div>
 </c:when>
 <c:when test="${ocean=='pac'}">
@@ -97,7 +97,7 @@
 </tbody>
 </table>
 <div class="summary summary-ocean">
-<img alt="Eastern pacific tropical cyclone activity" class="summary-ocean-image" height="200" src="http://www.nhc.noaa.gov/tafb_latest/danger_pac_latestBW_sm2.gif" width="250" />
+<img alt="Eastern pacific tropical cyclone activity" class="summary-ocean-image" src="http://www.nhc.noaa.gov/tafb_latest/danger_pac_latestBW_sm2.gif" />
 </div>
 </c:when>
 <c:otherwise>
@@ -110,7 +110,7 @@
 </tbody>
 </table>
 <div class="summary-radar">
-<noscript><img alt="<c:out value="${radar.icao}" /> Radar" height="550" src="<c:out value="${radar.baseurl}" />Loop.gif" width="600" /></noscript>
+<noscript><img alt="<c:out value="${radar.icao}" /> Radar" class="radar-image" src="<c:out value="${radar.baseurl}" />Loop.gif" /></noscript>
 <input id="jsloop" name="jsloop" type="hidden" value="<c:out value="${radar.baseurl}" />" />
 <script type="text/javascript">
 /* <![CDATA[ */
