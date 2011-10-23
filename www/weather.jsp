@@ -26,11 +26,6 @@
 <!-- source code: https://github.com/mattkenney/mwthr -->
 <meta content="initial-scale=1.0, maximum-scale=4.0" name="viewport" />
 <link href="/images/logo.png" rel="apple-touch-icon" />
-<script type="text/javascript">
-/* <![CDATA[ */
-<% pageContext.include("/js/geoupdate.js"); %>
-/* ]]> */
-</script>
 <style type="text/css">
 <% pageContext.include("/css/default.css"); %>
 </style>
@@ -114,6 +109,7 @@
 <input id="jsloop" name="jsloop" type="hidden" value="<c:out value="${radar.baseurl}" />" />
 <script type="text/javascript">
 /* <![CDATA[ */
+<% pageContext.include("/js/geoupdate.js"); %>
 <% pageContext.include("/js/radarloop.js"); %>
 /* ]]> */
 </script>
