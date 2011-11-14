@@ -1,8 +1,5 @@
 (function(){
 
-var overall = document.getElementById('overall');
-document.cookie = 'lrg=' + ((overall && overall.offsetWidth > 300) ? '1' : '0');
-
 if (navigator.geolocation)
 {
     navigator.geolocation.getCurrentPosition(

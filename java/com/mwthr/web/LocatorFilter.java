@@ -193,16 +193,6 @@ public class LocatorFilter implements Filter
             if (duration != null)
             {
                 Map<String, String> graph = fetcher.getResult(new Graph(stations)).getData();
-                if (graph != null && "1".equals(getCookie(request, "lrg")))
-                {
-                    for (String key : graph.keySet())
-                    {
-                        if (key.endsWith("x2"))
-                        {
-                            graph.put(key.substring(0, key.length() - 2), graph.get(key));
-                        }
-                    }
-                }
                 request.setAttribute("graph", graph);
             }
             request.setAttribute("current", current.getData());

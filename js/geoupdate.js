@@ -12,8 +12,6 @@ else
 setTimeout(
     function ()
     {
-        var overall = document.getElementById('overall');
-        document.cookie = 'lrg=' + ((overall && overall.offsetWidth > 300) ? '1' : '0');
         document.cookie = 'utc=' + new Date().getTime();
 
         if (navigator.geolocation)

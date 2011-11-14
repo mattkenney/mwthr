@@ -31,7 +31,8 @@ img
 .forecast-image
 {
     height:250px;
-    width:298px;
+    margin-left:1px;
+    width:296px;
 }
 
 .info
@@ -183,7 +184,8 @@ img
     .forecast-image
     {
         height:500px;
-        width:596px;
+        margin-left:2px;
+        width:592px;
     }
 
     .info

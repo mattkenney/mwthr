@@ -92,21 +92,23 @@ public class Graph
         formatDay.setTimeZone(TimeZone.getTimeZone("GMT"));
     }
 
-    private String makeGraphURL(Map<String, String> props, long startTime, int hourCount, boolean useLarge)
+    private String makeGraphURL(Map<String, String> props, long startTime, int hourCount)
     {
         StringBuilder buffer = new StringBuilder();
         buffer.append("http://chart.apis.google.com/chart");
         buffer.append("?cht=lxy"); // Chart Type
         buffer.append("&chco=FF0000,0000CC"); // Series colors
         buffer.append("&chdl=Temperature|Probability+of+Precipitation"); // Chart legend text
+        buffer.append("&chdls=737373,24"); // Chart legend text style
         buffer.append("&chdlp=t"); // Chart legend position
         buffer.append("&chg=0,8,4,1,0,4"); // Grid
+        buffer.append("&chls=2"); // Line width
+        buffer.append("&chtt=+"); // Chart margin
         buffer.append("&chxt=x,y,y,r,r"); // Visible Axes
-        buffer.append("&chxs=1,FF0000|2,FF0000|3,0000CC|4,0000CC"); // Axis Label Style
+        buffer.append("&chxs=0,737373,24|1,FF0000,24|2,FF0000,24|3,0000CC,24|4,0000CC,24"); // Axis Label Style
 
         // Chart size
-        buffer.append("&chs=");
-        buffer.append(useLarge ? "596x500" : "298x250");
+        buffer.append("&chs=592x500");
 
         // Custom Axis Labels
         buffer.append("&chxl=0:");
@@ -340,10 +342,8 @@ public class Graph
                 result.put(yKey, buffer.toString());
             }
 
-            result.put("graph24", makeGraphURL(result, min, 24, false));
-            result.put("graph24x2", makeGraphURL(result, min, 24, true));
-            result.put("graph120", makeGraphURL(result, min, 120, false));
-            result.put("graph120x2", makeGraphURL(result, min, 120, true));
+            result.put("graph24", makeGraphURL(result, min, 24));
+            result.put("graph120", makeGraphURL(result, min, 120));
         }
         catch (Exception e)
         {
