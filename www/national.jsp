@@ -40,7 +40,7 @@
 </tbody>
 </table>
 <div class="summary summary-national">
-<img alt="USA radar mosaic" class="summary-national-image" height="141" src="http://radar.weather.gov/Conus/RadarImg/latest_Small.gif" width="300" usemap="#radarmap" />
+<img alt="USA radar mosaic" class="summary-national-image" src="http://radar.weather.gov/Conus/RadarImg/latest_Small.gif" usemap="#radarmap" />
 </div>
 <map name="radarmap">
 <area shape="poly" coords="38,0,36,12,32,18,3,13,6,0,38,0,38,0" href="/icao/katx/" alt="Go to the Seattle/Tacoma, WA Doppler radar">

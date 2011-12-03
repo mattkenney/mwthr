@@ -101,7 +101,9 @@ img
 
 .summary-national-image
 {
-    margin-left:-2px;
+    height:141px;
+    margin-left:-1px;
+    width:300px;
 }
 
 .summary-ocean
@@ -224,6 +226,13 @@ img
     {
         height:282px;
         width:598px;
+    }
+
+    .summary-national-image
+    {
+        height:282px;
+        margin-left:-2px;
+        width:600px;
     }
 
     .summary-ocean
